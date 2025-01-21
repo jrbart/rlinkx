@@ -1,1 +1,5 @@
-<h1> Remote Links </h1>
+<h1> {@link.name} </h1>
+<div phx-click="toggle-link">
+  <div :if={!@hide_link?}>  {@link.url_link} </div>
+  <div :if={@hide_link?}>  {@link.description} </div>
+</div>
