@@ -15,7 +15,7 @@ alias Rlinkx.Repo
 link = %Bookmark{
   name: "Elixir Docs",
   url_link: "https://hexdocs.pm/elixir/Kernel.html",
-  description: "Start Here"
+  description: "Official docs for Elixir.  This is the go-to page for almost any Elixir question."
 }
 
 Repo.insert!(link)
