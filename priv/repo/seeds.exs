@@ -12,10 +12,24 @@
 alias Rlinkx.Remote.Bookmark
 alias Rlinkx.Repo
 
-link = %Bookmark{
+link1 = %Bookmark{
   name: "Elixir Docs",
   url_link: "https://hexdocs.pm/elixir/Kernel.html",
   description: "Official docs for Elixir.  This is the go-to page for almost any Elixir question."
 }
 
-Repo.insert!(link)
+link2 = %Bookmark{
+  name: "Phoenix Docs",
+  url_link: "https://hexdocs.pm/phoenix/Phoenix.html",
+  description: "Official docs for Phoenix.  Go here to look up Phoenix stuff in general."
+}
+
+link3 = %Bookmark{
+  name: "LiveView Docs",
+  url_link: "https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html",
+  description: "Official docs for LiveView.  There be drogons here!"
+}
+
+links = [link1, link2, link3]
+
+for link <- links, do: Repo.insert!(link)
