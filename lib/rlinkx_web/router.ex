@@ -19,6 +19,7 @@ defmodule RlinkxWeb.Router do
 
     # get "/", PageController, :home
     live "/", RLinksLive
+    live "/room/:id", RLinksLive
   end
 
   # Other scopes may use custom stacks.

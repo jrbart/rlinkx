@@ -2,13 +2,24 @@ defmodule RlinkxWeb.RLinksLive do
   use RlinkxWeb, :live_view
   
   alias Rlinkx.Remote.Bookmark 
-  alias Rlinkx.Repo
+  alias Rlinkx.Remote
 
   def mount(_params, _session, socket) do
-    links = Bookmark |> Repo.all
-    link = links |> List.first
+    links = Remote.get_all
 
-    {:ok, assign(socket, hide_link?: false, link: link, links: links)}
+    {:ok, assign(socket, hide_link?: false, links: links)}
+  end
+
+  def handle_params(params, _uri, socket) do
+    links = socket.assigns.links
+
+    link = case Map.fetch(params, "id") do
+      {:ok, id} -> Enum.find(links, &(to_string(&1.id) == id))
+      
+      :error -> links |> List.first
+    end
+
+    {:noreply, assign(socket, link: link)}
   end
 
   def handle_event("toggle-link", _params, socket) do
@@ -20,7 +31,7 @@ defmodule RlinkxWeb.RLinksLive do
   defp bookmark_link(assigns) do
     ~H"""
       <div>
-        <a href="#"> {@link.name} </a>
+        <.link patch={~p"/room/#{@link}"}> {@link.name} </.link>
       </div>
     """
   end
