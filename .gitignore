@@ -35,3 +35,6 @@ rlinkx-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# ignore Poastgres internals
+/.pg/
+/logfile

@@ -19,7 +19,7 @@ defmodule RlinkxWeb.RLinksLive do
       :error -> links |> List.first
     end
 
-    {:noreply, assign(socket, link: link)}
+    {:noreply, assign(socket, link: link, page_title: link.name)}
   end
 
   def handle_event("toggle-link", _params, socket) do
