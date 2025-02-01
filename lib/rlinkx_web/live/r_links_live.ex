@@ -31,7 +31,7 @@ defmodule RlinkxWeb.RLinksLive do
   defp bookmark_link(assigns) do
     ~H"""
       <div>
-        <.link patch={~p"/room/#{@link}"}> {@link.name} </.link>
+        <.link patch={~p"/link/#{@link}"}> {@link.name} </.link>
       </div>
     """
   end

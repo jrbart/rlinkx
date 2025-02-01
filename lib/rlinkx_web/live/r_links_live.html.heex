@@ -45,6 +45,10 @@ body {
 
   <div class="column middle">
     <div> {@link.name} </div>
+    <.link
+      navigate={~p"/link/:id/edit"}
+    >
+    </.link>
     <div phx-click="toggle-link">
       <div :if={!@hide_link?}>  {@link.url_link} </div>
       <div :if={@hide_link?}>  {@link.description} </div>

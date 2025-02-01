@@ -4,8 +4,27 @@ defmodule Rlinkx.Remote do
 
   import Ecto.Query
 
+  def get_link!(id) do 
+    Repo.get!(Bookmark, id)
+  end
+
   def get_all do
     Repo.all(from Bookmark, order_by: :name)
   end
-  
+
+  def create_link(attrs) do 
+    %Bookmark{} 
+    |> Bookmark.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def updaate_link(%Bookmark{} = bookmark, attrs) do
+  bookmark
+  |> Bookmark.changeset(attrs)
+  |> Repo.update()
+  end
+
+  def change_link() do
+    
+  end
 end
