@@ -18,9 +18,9 @@ defmodule RlinkxWeb.Router do
     pipe_through :browser
 
     # get "/", PageController, :home
-    live "/", RLinksLive
-    live "/link/:id", RLinksLive
-    live "/link/:id/edit", RLinksLive.Edit
+    live "/", RlinkxLive
+    live "/link/:id", RlinkxLive
+    live "/link/:id/edit", RlinkxLive.Edit
   end
 
   # Other scopes may use custom stacks.

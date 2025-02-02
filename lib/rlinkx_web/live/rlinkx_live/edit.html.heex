@@ -1,0 +1,19 @@
+<.header>
+  {@page_title}
+  <:actions>
+    <.link
+      navigate={~p"/link/#{@link}"}
+    >
+      Back
+    </.link>
+  </:actions>
+</.header>
+
+<.simple_form for={@form} id="room-form">
+  <.input field={@form[:name]} type="text" label="Name"/>
+  <.input field={@form[:description]} type="textarea" label="Description"/>
+  <.input field={@form[:url_link]} type="text" label="Link"/>
+  <:actions>
+    <.button phx-disable-with="Saving..."> Save </.button>
+  </:actions>
+</.simple_form>

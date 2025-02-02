@@ -1,4 +1,4 @@
-defmodule RlinkxWeb.RLinksLive do
+defmodule RlinkxWeb.RlinkxLive do
   use RlinkxWeb, :live_view
   
   alias Rlinkx.Remote.Bookmark 

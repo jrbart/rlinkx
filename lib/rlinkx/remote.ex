@@ -18,13 +18,13 @@ defmodule Rlinkx.Remote do
     |> Repo.insert()
   end
 
-  def updaate_link(%Bookmark{} = bookmark, attrs) do
-  bookmark
-  |> Bookmark.changeset(attrs)
-  |> Repo.update()
+  def update_link(%Bookmark{} = bookmark, attrs) do
+    bookmark
+    |> Bookmark.changeset(attrs)
+    |> Repo.update()
   end
 
-  def change_link() do
-    
+  def change_link(link, attrs \\ %{}) do
+    Bookmark.changeset(link, attrs)
   end
 end

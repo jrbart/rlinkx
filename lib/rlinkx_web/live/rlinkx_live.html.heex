@@ -46,8 +46,9 @@ body {
   <div class="column middle">
     <div> {@link.name} </div>
     <.link
-      navigate={~p"/link/:id/edit"}
+      navigate={~p"/link/#{@link}/edit"}
     >
+    Edit
     </.link>
     <div phx-click="toggle-link">
       <div :if={!@hide_link?}>  {@link.url_link} </div>
@@ -56,9 +57,13 @@ body {
   </div>
 </div>
 
+<hr>
 
 <div class="row">
   <div class="column side">
     <.bookmark_link :for={link <- @links} link={link}/>
+  </div>
+  <div class="column middle">
+    Stuff goes here...
   </div>
 </div>
