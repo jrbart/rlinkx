@@ -9,7 +9,7 @@
   </:actions>
 </.header>
 
-<.simple_form for={@form} id="room-form">
+<.simple_form for={@form} id="room-form" phx-change="validate-link" phx-submit="save-link">
   <.input field={@form[:name]} type="text" label="Name"/>
   <.input field={@form[:description]} type="textarea" label="Description"/>
   <.input field={@form[:url_link]} type="text" label="Link"/>
