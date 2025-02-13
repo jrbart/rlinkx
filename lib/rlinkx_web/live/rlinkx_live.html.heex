@@ -20,7 +20,12 @@ body {
 
 /* middle column */
 .column.middle {
-  width: 75%;
+  width: 50%;
+}
+
+/* right column */
+.column.right {
+  width: 25%;
 }
 
 /* clear floats after the columns */
@@ -45,16 +50,20 @@ body {
 
   <div class="column middle">
     <div> {@link.name} </div>
-    <.link
-      navigate={~p"/link/#{@link}/edit"}
-    >
-    edit
-    </.link>
+    <.link navigate={~p"/link/#{@link}/edit"} > edit </.link>
     <div phx-click="toggle-link">
       <div :if={!@hide_link?}>  {@link.url_link} </div>
       <div :if={@hide_link?}>  {@link.description} </div>
     </div>
   </div>
+   
+  <%!-- User info (from Auth) --%>
+  <div class="column right">
+    <div> {@current_user.email} </div>
+    <div> <.link href={~p"/users/settings"} > Settings </.link> </div>
+    <div> <.link href={~p"/users/log_out"} method="delete" > Log out </.link> </div>
+  </div>
+
 </div>
 
 <hr>
