@@ -25,7 +25,7 @@ defmodule RlinkxWeb.RlinkxLive do
       assign(socket,
         link: link,
         insights: insights,
-        page_title: link.name
+        page_title: link #.name
     )}
   end
 
