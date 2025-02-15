@@ -43,17 +43,22 @@ defmodule RlinkxWeb.RlinkxLive do
     """
   end
 
-  attr :body, Insight, required: true
+  attr :insight, Insight, required: true
 
   defp insight(assigns) do
     ~H"""
     <div>
       <div></div>
       <div>
-        <.link><span>User</span></.link>
-        <p>{@body.body}</p>
+        <.link><span>{user(@insight.user)}</span></.link>
+        <p>{@insight.body}</p>
       </div>
     </div>
     """
+  end
+
+  defp user(user) do
+    [name | _] = String.split(user.email, "@")
+    name
   end
 end

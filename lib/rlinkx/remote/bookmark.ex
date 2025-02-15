@@ -2,10 +2,14 @@ defmodule Rlinkx.Remote.Bookmark do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Rlinkx.Remote.Insight
+
   schema "bookmarks" do
     field :name, :string
     field :description, :string
     field :url_link, :string
+
+    has_many :insights, Insight
 
     timestamps(type: :utc_datetime)
   end

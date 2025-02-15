@@ -32,4 +32,7 @@ link3 = %Bookmark{
 
 links = [link1, link2, link3]
 
-for link <- links, do: Repo.insert!(link)
+for link <- links do
+  bmark = Repo.insert!(link)
+
+end
