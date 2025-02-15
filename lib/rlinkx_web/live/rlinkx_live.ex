@@ -1,7 +1,7 @@
 defmodule RlinkxWeb.RlinkxLive do
   use RlinkxWeb, :live_view
   
-  alias Rlinkx.Remote.Bookmark 
+  alias Rlinkx.Remote.{Bookmark,Insight} 
   alias Rlinkx.Remote
 
   def mount(_params, _session, socket) do
@@ -19,7 +19,14 @@ defmodule RlinkxWeb.RlinkxLive do
       :error -> links |> List.first
     end
 
-    {:noreply, assign(socket, link: link, page_title: link.name)}
+   insights = Remote.list_all_insights(link) 
+
+    {:noreply,
+      assign(socket,
+        link: link,
+        insights: insights,
+        page_title: link.name
+    )}
   end
 
   def handle_event("toggle-link", _params, socket) do
@@ -33,6 +40,20 @@ defmodule RlinkxWeb.RlinkxLive do
       <div>
         <.link patch={~p"/link/#{@link}"}> {@link.name} </.link>
       </div>
+    """
+  end
+
+  attr :body, Insight, required: true
+
+  defp insight(assigns) do
+    ~H"""
+    <div>
+      <div></div>
+      <div>
+        <.link><span>User</span></.link>
+        <p>{@body.body}</p>
+      </div>
+    </div>
     """
   end
 end

@@ -1,7 +1,7 @@
 defmodule RlinkxWeb.RlinkxLive.Edit do
   use RlinkxWeb, :live_view
   
-  alias Rlinkx.Remote.Bookmark 
+  # alias Rlinkx.Remote.Bookmark 
   alias Rlinkx.Remote
 
   def mount(%{"id" => id} = _params, _session, socket) do

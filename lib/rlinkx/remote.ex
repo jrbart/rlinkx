@@ -1,5 +1,5 @@
 defmodule Rlinkx.Remote do
-  alias Rlinkx.Remote.Bookmark
+  alias Rlinkx.Remote.{Insight, Bookmark}
   alias Rlinkx.Repo
 
   import Ecto.Query
@@ -10,6 +10,13 @@ defmodule Rlinkx.Remote do
 
   def get_all do
     Repo.all(from Bookmark, order_by: :name)
+  end
+
+  def list_all_insights(%Bookmark{id: bookmark_id}) do
+    Insight
+    |> where([i], i.bookmark_id == ^bookmark_id)
+    |> order_by([i], asc: :inserted_at, asc: :id)
+    |> Repo.all()
   end
 
   def create_link(attrs) do 

@@ -73,6 +73,7 @@ body {
     <.bookmark_link :for={link <- @links} link={link}/>
   </div>
   <div class="column middle">
-    stuff goes here...
+    Discuss this bookmark...
+    <.insight :for={insight <- @insights} body={insight} />
   </div>
 </div>
