@@ -12,7 +12,6 @@ defmodule Rlinkx.Remote do
     Repo.all(from Bookmark, order_by: :name)
   end
 
-  def list_all_insights(nil), do: [nil]
   def list_all_insights(%Bookmark{id: bookmark_id}) do
     Insight
     |> where([i], i.bookmark_id == ^bookmark_id)

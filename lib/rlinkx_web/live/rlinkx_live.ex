@@ -19,13 +19,15 @@ defmodule RlinkxWeb.RlinkxLive do
       :error -> links |> List.first
     end
 
-   insights = Remote.list_all_insights(link) 
+    insights = if link do
+      Remote.list_all_insights(link) 
+    end
 
     {:noreply,
       assign(socket,
         link: link,
         insights: insights,
-        # page_title: link.name
+        page_title: link && link.name
     )}
   end
 

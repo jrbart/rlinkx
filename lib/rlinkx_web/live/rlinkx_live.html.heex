@@ -48,7 +48,7 @@ body {
     rlinks
   </div>
 
-  <div class="column middle">
+  <div :if={@link} class="column middle">
     <div> {@link.name} </div>
     <.link navigate={~p"/link/#{@link}/edit"} > edit </.link>
     <div phx-click="toggle-link">
@@ -74,6 +74,8 @@ body {
   </div>
   <div class="column middle">
     Discuss this bookmark...
+    <%= if @insights do %>
     <.insight :for={insight <- @insights} insight={insight} />
+    <% end %>
   </div>
 </div>
