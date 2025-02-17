@@ -59,7 +59,7 @@ body {
    
   <%!-- User info (from Auth) --%>
   <div class="column right">
-    <div> {@current_user.email} </div>
+    <div> {user(@current_user)} </div>
     <div> <.link href={~p"/users/settings"} > Settings </.link> </div>
     <div> <.link href={~p"/users/log_out"} method="delete" > Log out </.link> </div>
   </div>
