@@ -20,9 +20,13 @@ defmodule Rlinkx.Remote do
     |> Repo.all()
   end
 
-  def create_link(attrs) do 
-    %Bookmark{} 
-    |> Bookmark.changeset(attrs)
+  def changeset_link(link, attrs \\ %{}) do
+    Insight.changeset(link, attrs)
+  end
+
+  def create_link(link, user, attrs) do 
+    %Insight{bookmark: link, user: user} 
+    |> Insight.changeset(attrs)
     |> Repo.insert()
   end
 

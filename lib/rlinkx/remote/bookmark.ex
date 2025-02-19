@@ -19,7 +19,7 @@ defmodule Rlinkx.Remote.Bookmark do
     bookmark
     |> cast(attrs, [:name, :description, :url_link])
     |> validate_required([:name, :url_link])
-    |> validate_length(:name, max: 80)
+    |> validate_length(:name, max: 20)
     |> validate_format(:name, ~r/[[:alnum:]-]+/,
       message: "can only contain alphanumeric characters and dashes"
     )

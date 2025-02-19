@@ -24,15 +24,41 @@ defmodule RlinkxWeb.RlinkxLive do
     end
 
     {:noreply,
-      assign(socket,
+      socket
+      |> assign(
         link: link,
         insights: insights,
         page_title: link && link.name
-    )}
+      )
+      |> assign_insight_form(Remote.changeset_link(%Insight{}))}
+  end
+
+  def assign_insight_form(socket, changeset) do
+    assign(socket, :new_insight_form, to_form(changeset))
   end
 
   def handle_event("toggle-link", _params, socket) do
     {:noreply, update(socket, :hide_link?, &(!&1))}
+  end
+
+  def handle_event("validate-insight", %{"insight" => insight_params}, socket) do
+    changeset = Remote.changeset_link(%Insight{}, insight_params)
+    {:noreply, assign_insight_form(socket, changeset)}
+  end
+
+  def handle_event("submit-insight", %{"insight" => insight_params}, socket) do
+    %{current_user: current_user, link: link} = socket.assigns
+
+    socket = case Remote.create_link(link, current_user, insight_params) do
+      {:ok, insight} ->
+        socket
+        |> update(:insights, &(&1 ++ [insight]))
+        |> assign_insight_form(Remote.changeset_link(%Insight{}))
+      {:error, changeset} ->
+        assign_insight_form(socket, changeset)
+    end
+
+    {:noreply, socket}
   end
 
   attr :link, Bookmark, required: true
