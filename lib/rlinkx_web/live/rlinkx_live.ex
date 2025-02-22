@@ -81,6 +81,7 @@ defmodule RlinkxWeb.RlinkxLive do
       <div></div>
       <div>
         <.link><span>{user(@insight.user)}</span></.link>
+        <span :if={@timezone}>{insight_timestamp(@insight, @timezone)}</span>
         <p>{@insight.body}</p>
       </div>
     </div>
@@ -90,5 +91,10 @@ defmodule RlinkxWeb.RlinkxLive do
   defp user(user) do
     [name | _] = String.split(user.email, "@")
     name
+  end
+
+  defp insight_timestamp(insight, timezone) do
+    IO.inspect(timezone, label: :timezone)
+    insight.inserted_at 
   end
 end
