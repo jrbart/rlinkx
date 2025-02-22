@@ -72,10 +72,12 @@ body {
   <div class="column side">
     <.bookmark_link :for={link <- @links} link={link}/>
   </div>
-  <div class="column middle">
-    Discuss this bookmark...
-    <%= if @insights do %>
-    <.insight :for={insight <- @insights} insight={insight} />
+  <div id="insight-list" class="column middle" phx-update="stream">
+    <%= if @streams.insights do %>
+    <.insight :for={{dom_id, insight} <- 
+      @streams.insights} 
+      insight={insight} 
+      dom_id={dom_id} 
     <% end %>
 
   <.form

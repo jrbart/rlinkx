@@ -27,9 +27,9 @@ defmodule RlinkxWeb.RlinkxLive do
       socket
       |> assign(
         link: link,
-        insights: insights,
         page_title: link && link.name
       )
+      |> stream(:insights, insights, reset: true)
       |> assign_insight_form(Remote.changeset_link(%Insight{}))}
   end
 
@@ -52,7 +52,8 @@ defmodule RlinkxWeb.RlinkxLive do
     socket = case Remote.create_link(link, current_user, insight_params) do
       {:ok, insight} ->
         socket
-        |> update(:insights, &(&1 ++ [insight]))
+        # |> update(:insights, &(&1 ++ [insight]))
+        |> stream_insert(:insights, insight)
         |> assign_insight_form(Remote.changeset_link(%Insight{}))
       {:error, changeset} ->
         assign_insight_form(socket, changeset)
@@ -71,11 +72,12 @@ defmodule RlinkxWeb.RlinkxLive do
     """
   end
 
+  attr :dom_id, :string, required: true
   attr :insight, Insight, required: true
 
   defp insight(assigns) do
     ~H"""
-    <div>
+    <div id={@dom_id}>
       <div></div>
       <div>
         <.link><span>{user(@insight.user)}</span></.link>
