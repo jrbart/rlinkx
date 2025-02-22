@@ -6,8 +6,15 @@ defmodule RlinkxWeb.RlinkxLive do
 
   def mount(_params, _session, socket) do
     links = Remote.get_all
+    connection_params=get_connect_params(socket)
+    IO.inspect(connection_params, label: :mount)
+    timezone = connection_params["timezone"]
 
-    {:ok, assign(socket, hide_link?: false, links: links)}
+    {:ok, assign(socket,
+      hide_link?: false,
+      links: links,
+      timezone: timezone
+    )}
   end
 
   def handle_params(params, _uri, socket) do
@@ -73,6 +80,7 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   attr :dom_id, :string, required: true
+  attr :timezone, :string, required: true
   attr :insight, Insight, required: true
 
   defp insight(assigns) do
@@ -96,5 +104,7 @@ defmodule RlinkxWeb.RlinkxLive do
   defp insight_timestamp(insight, timezone) do
     IO.inspect(timezone, label: :timezone)
     insight.inserted_at 
+    |> Timex.Timezone.convert(timezone)
+    |> Timex.format!("%T", :strftime)
   end
 end
