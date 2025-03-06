@@ -1,4 +1,5 @@
 defmodule Rlinkx.Remote do
+  alias Rlinkx.Accounts.User
   alias Rlinkx.Remote.{Insight, Bookmark}
   alias Rlinkx.Repo
 
@@ -20,14 +21,24 @@ defmodule Rlinkx.Remote do
     |> Repo.all()
   end
 
+  # TODO this should be insight, not link...
   def changeset_link(link, attrs \\ %{}) do
     Insight.changeset(link, attrs)
   end
 
+  # TODO this should be insight, not link...
   def create_link(link, user, attrs) do 
     %Insight{bookmark: link, user: user} 
     |> Insight.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def delete_insight(id, %User{id: user_id}) do
+    insight = Repo.get!(Insight,id, preload: :user)
+    if insight.user_id  == user_id do
+      Repo.delete!(insight)
+    end
+
   end
 
   def update_link(%Bookmark{} = bookmark, attrs) do

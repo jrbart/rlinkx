@@ -2,12 +2,12 @@ defmodule RlinkxWeb.RlinkxLive do
   use RlinkxWeb, :live_view
   
   alias Rlinkx.Remote.{Bookmark,Insight} 
+  alias Rlinkx.Accounts.User
   alias Rlinkx.Remote
 
   def mount(_params, _session, socket) do
     links = Remote.get_all
     connection_params=get_connect_params(socket)
-    IO.inspect(connection_params, label: :mount)
     timezone = connection_params["timezone"]
 
     {:ok, assign(socket,
@@ -69,6 +69,16 @@ defmodule RlinkxWeb.RlinkxLive do
     {:noreply, socket}
   end
 
+  def handle_event("delete-insight", %{"id" => id}, socket) do
+      {:noreply, socket
+        |> stream_delete(:insights, 
+          Remote.delete_insight(
+            String.to_integer(id), 
+            socket.assigns.current_user
+        ))
+      }
+  end
+
   attr :link, Bookmark, required: true
 
   defp bookmark_link(assigns) do
@@ -80,6 +90,7 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   attr :dom_id, :string, required: true
+  attr :current_user, User, required: true
   attr :timezone, :string, required: true
   attr :insight, Insight, required: true
 
@@ -91,6 +102,14 @@ defmodule RlinkxWeb.RlinkxLive do
         <.link><span>{user(@insight.user)}</span></.link>
         <span :if={@timezone}>{insight_timestamp(@insight, @timezone)}</span>
         <p>{@insight.body}</p>
+        <button 
+          :if={@insight.user == @current_user} 
+          phx-click="delete-insight"
+          phx-value-id={@insight.id} 
+          data-confirm="This will be permanent"
+        >
+          delete
+        </button>
       </div>
     </div>
     """
@@ -102,7 +121,6 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   defp insight_timestamp(insight, timezone) do
-    IO.inspect(timezone, label: :timezone)
     insight.inserted_at 
     |> Timex.Timezone.convert(timezone)
     |> Timex.format!("%T", :strftime)
