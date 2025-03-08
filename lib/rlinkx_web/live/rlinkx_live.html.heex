@@ -35,6 +35,15 @@ body {
   clear: both;
 }
 
+/* group hover blocks */
+.group .group-hover{
+  visibility: hidden;
+}
+
+.group:hover .group-hover{
+  visibility: visible;
+}
+
 /* responsive layout - makes the three columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 600px) {
   .column.side, .column.middle {

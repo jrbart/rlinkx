@@ -96,13 +96,14 @@ defmodule RlinkxWeb.RlinkxLive do
 
   defp insight(assigns) do
     ~H"""
-    <div id={@dom_id}>
+    <div id={@dom_id} class="group">
       <div></div>
       <div>
         <.link><span>{user(@insight.user)}</span></.link>
         <span :if={@timezone}>{insight_timestamp(@insight, @timezone)}</span>
         <p>{@insight.body}</p>
         <button 
+          class="group-hover"
           :if={@insight.user == @current_user} 
           phx-click="delete-insight"
           phx-value-id={@insight.id} 
