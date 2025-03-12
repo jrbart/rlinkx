@@ -19,6 +19,7 @@ defmodule RlinkxWeb.RlinkxLive do
 
   def handle_params(params, _uri, socket) do
     links = socket.assigns.links
+    if socket.assigns[:link], do: Remote.unsubscribe_to_link(socket.assigns.link)
 
     link = case Map.fetch(params, "id") do
       {:ok, id} -> Enum.find(links, &(to_string(&1.id) == id))
@@ -26,6 +27,8 @@ defmodule RlinkxWeb.RlinkxLive do
       :error -> links |> List.first
     end
 
+    Remote.subscribe_to_link(link)
+  
     insights = if link do
       Remote.list_all_insights(link) 
     end
@@ -37,7 +40,7 @@ defmodule RlinkxWeb.RlinkxLive do
         page_title: link && link.name
       )
       |> stream(:insights, insights, reset: true)
-      |> assign_insight_form(Remote.changeset_link(%Insight{}))}
+      |> assign_insight_form(Remote.changeset_insight(%Insight{}))}
   end
 
   def assign_insight_form(socket, changeset) do
@@ -49,19 +52,17 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   def handle_event("validate-insight", %{"insight" => insight_params}, socket) do
-    changeset = Remote.changeset_link(%Insight{}, insight_params)
+    changeset = Remote.changeset_insight(%Insight{}, insight_params)
     {:noreply, assign_insight_form(socket, changeset)}
   end
 
   def handle_event("submit-insight", %{"insight" => insight_params}, socket) do
     %{current_user: current_user, link: link} = socket.assigns
 
-    socket = case Remote.create_link(link, current_user, insight_params) do
-      {:ok, insight} ->
+    socket = case Remote.create_insight(link, current_user, insight_params) do
+      {:ok, _insight} ->
         socket
-        # |> update(:insights, &(&1 ++ [insight]))
-        |> stream_insert(:insights, insight)
-        |> assign_insight_form(Remote.changeset_link(%Insight{}))
+        |> assign_insight_form(Remote.changeset_insight(%Insight{}))
       {:error, changeset} ->
         assign_insight_form(socket, changeset)
     end
@@ -70,13 +71,18 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   def handle_event("delete-insight", %{"id" => id}, socket) do
-      {:noreply, socket
-        |> stream_delete(:insights, 
-          Remote.delete_insight(
-            String.to_integer(id), 
-            socket.assigns.current_user
-        ))
-      }
+      Remote.delete_insight(
+        String.to_integer(id), 
+        socket.assigns.current_user )
+      {:noreply, socket }
+  end
+
+  def handle_info({:insight_created, insight}, socket) do
+    {:noreply, stream_insert(socket, :insights, insight)}
+  end
+
+  def handle_info({:insight_deleted, insight}, socket) do
+    {:noreply, stream_delete(socket, :insights, insight)}
   end
 
   attr :link, Bookmark, required: true
