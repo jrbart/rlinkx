@@ -20,8 +20,8 @@ defmodule Rlinkx.Remote.Bookmark do
     |> cast(attrs, [:name, :description, :url_link])
     |> validate_required([:name, :url_link])
     |> validate_length(:name, max: 20)
-    |> validate_format(:name, ~r/[[:alnum:]-]+/,
-      message: "can only contain alphanumeric characters and dashes"
+    |> validate_format(:name, ~r/\A[[:alnum:]_-]+\z/,
+      message: "can only contain alphanumeric characters, dashes and underscores"
     )
     |> unsafe_validate_unique(:name, Rlinkx.Repo)
     |> unique_constraint(:name)
