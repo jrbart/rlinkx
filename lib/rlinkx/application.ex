@@ -16,6 +16,7 @@ defmodule Rlinkx.Application do
       {Finch, name: Rlinkx.Finch},
       # Start a worker by calling: Rlinkx.Worker.start_link(arg)
       # {Rlinkx.Worker, arg},
+      RlinkxWeb.Presence,
       # Start to serve requests, typically the last entry
       RlinkxWeb.Endpoint
     ]

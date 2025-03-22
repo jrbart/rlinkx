@@ -5,6 +5,7 @@ defmodule RlinkxWeb.RlinkxLive do
   alias Rlinkx.Remote.{Bookmark,Insight} 
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote
+  alias RlinkxWeb.Online
 
   def mount(_params, _session, socket) do
     links = Remote.get_all
@@ -12,10 +13,15 @@ defmodule RlinkxWeb.RlinkxLive do
     timezone = connection_params["timezone"]
     users = Accounts.all_users()
 
+    if connected?(socket) do
+      Online.track(self(), socket.assigns.current_user)
+    end
+
     {:ok, assign(socket,
       hide_link?: false,
       links: links,
       users: users,
+      online_users: Online.list(),
       timezone: timezone
     )}
   end
@@ -126,16 +132,21 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   attr :user, :string, required: true
+  attr :online, :boolean, required: false
 
   defp user(assigns) do
     ~H"""
-    <div>{user_name(@user)}</div>
+    <div :if={@online}>{user_name(@user)}</div>
     """
   end
 
   defp user_name(user) do
     [name | _] = String.split(user.email, "@")
     name
+  end
+
+  defp online?(online_users, user) do
+    Map.get(online_users, user.id, 0) > 0
   end
 
   defp insight_timestamp(insight, timezone) do
