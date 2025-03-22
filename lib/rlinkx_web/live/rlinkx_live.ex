@@ -1,6 +1,7 @@
 defmodule RlinkxWeb.RlinkxLive do
   use RlinkxWeb, :live_view
   
+  alias Rlinkx.Accounts
   alias Rlinkx.Remote.{Bookmark,Insight} 
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote
@@ -9,10 +10,12 @@ defmodule RlinkxWeb.RlinkxLive do
     links = Remote.get_all
     connection_params=get_connect_params(socket)
     timezone = connection_params["timezone"]
+    users = Accounts.all_users()
 
     {:ok, assign(socket,
       hide_link?: false,
       links: links,
+      users: users,
       timezone: timezone
     )}
   end
@@ -105,7 +108,7 @@ defmodule RlinkxWeb.RlinkxLive do
     <div id={@dom_id} class="group">
       <div></div>
       <div>
-        <.link><span>{user(@insight.user)}</span></.link>
+        <.link><span>{user_name(@insight.user)}</span></.link>
         <span :if={@timezone}>{insight_timestamp(@insight, @timezone)}</span>
         <p>{@insight.body}</p>
         <button 
@@ -122,7 +125,15 @@ defmodule RlinkxWeb.RlinkxLive do
     """
   end
 
-  defp user(user) do
+  attr :user, :string, required: true
+
+  defp user(assigns) do
+    ~H"""
+    <div>{user_name(@user)}</div>
+    """
+  end
+
+  defp user_name(user) do
     [name | _] = String.split(user.email, "@")
     name
   end

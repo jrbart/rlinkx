@@ -68,7 +68,7 @@ body {
    
   <%!-- User info (from Auth) --%>
   <div class="column right">
-    <div> {user(@current_user)} </div>
+    <div> {user_name(@current_user)} </div>
     <div> <.link href={~p"/users/settings"} > Settings </.link> </div>
     <div> <.link href={~p"/users/log_out"} method="delete" > Log out </.link> </div>
   </div>
@@ -80,6 +80,13 @@ body {
 <div class="row">
   <div class="column side">
     <.bookmark_link :for={link <- @links} link={link}/>
+    <br/>
+    <div id="users-list">
+      <.user
+        :for={user <- @users}
+        user={user}
+      />
+    </div>
   </div>
   <div id="insight-list" class="column middle" phx-update="stream">
     <%= if @streams.insights do %>
