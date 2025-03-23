@@ -12,16 +12,22 @@ defmodule RlinkxWeb.RlinkxLive do
     connection_params=get_connect_params(socket)
     timezone = connection_params["timezone"]
     users = Accounts.all_users()
+    Online.subscribe()
+    online_users = Online.list()
 
+    # Note: track will trigger an update with presence_diff
+    # so if we got the list on online users after calling track
+    # the first presence would be counted twice
     if connected?(socket) do
       Online.track(self(), socket.assigns.current_user)
     end
+
 
     {:ok, assign(socket,
       hide_link?: false,
       links: links,
       users: users,
-      online_users: Online.list(),
+      online_users: online_users,
       timezone: timezone
     )}
   end
@@ -92,6 +98,11 @@ defmodule RlinkxWeb.RlinkxLive do
 
   def handle_info({:insight_deleted, insight}, socket) do
     {:noreply, stream_delete(socket, :insights, insight)}
+  end
+
+  def handle_info(%{event: "presence_diff", payload: diff}, socket) do
+    online_users = Online.update(socket.assigns.online_users, diff)
+    {:noreply, assign(socket, online_users: online_users)}
   end
 
   attr :link, Bookmark, required: true
