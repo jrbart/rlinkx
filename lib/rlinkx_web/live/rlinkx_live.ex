@@ -165,4 +165,27 @@ defmodule RlinkxWeb.RlinkxLive do
     |> Timex.Timezone.convert(timezone)
     |> Timex.format!("%T", :strftime)
   end
+
+  attr :name, :string, required: true
+  slot :inner_block, required: true
+
+  defp collapsible_list(assigns) do
+    ~H"""
+      <div 
+      id={@name <> "-title"} 
+      phx-click={
+        JS.toggle(to: "##{@name}-list")
+        |> JS.toggle(to: "##{@name}-expand", display: "inline-block")
+        |> JS.toggle(to: "##{@name}-collapse", display: "inline-block")
+      }
+    > 
+      <.icon name="hero-minus-micro" id={@name <> "-collapse"} style="display: inline-block"/>
+      <.icon name="hero-plus-micro" id={@name <> "-expand"} style="display: none"/>
+      {String.capitalize(@name)}
+    </div>
+    <div id={@name <> "-list"}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
 end

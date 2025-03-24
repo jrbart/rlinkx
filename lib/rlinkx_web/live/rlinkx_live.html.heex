@@ -79,15 +79,19 @@ body {
 
 <div class="row">
   <div class="column side">
-    <.bookmark_link :for={link <- @links} link={link}/>
+    <.collapsible_list name="bookmarks">
+      <.bookmark_link :for={link <- @links} link={link}/>
+    </.collapsible_list>
+
     <br/>
-    <div id="users-list">
+    
+    <.collapsible_list name="users">
       <.user
         :for={user <- @users}
         user={user}
         online={online?(@online_users,user)}
       />
-    </div>
+    </.collapsible_list>
   </div>
   <div id="insight-list" class="column middle" phx-update="stream">
     <%= if @streams.insights do %>
