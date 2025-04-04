@@ -1,0 +1,26 @@
+<main>
+  {@page_title}
+  <br/>
+
+  <div id="bookmark-list">
+    <div :for={{id,link} <- @streams.links}
+      id={id}
+    >
+    <span
+      name={id}
+      id={"checkbox-" <> id} 
+      phx-click={
+        JS.toggle(to: "##{id}-expand", display: "inline-block")
+        |> JS.toggle(to: "##{id}-collapse", display: "inline-block")
+      }
+    > 
+      <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: inline-block"/>
+      <.icon name="hero-check-micro" id={id <> "-expand"} style="display: none"/>
+
+    </span>
+      <.link navigate={~p"/link/#{link}"} >  
+        {link.name}
+      </.link>  
+    </div>
+  </div>
+</main>

@@ -63,6 +63,7 @@ defmodule RlinkxWeb.Router do
       live "/", RlinkxLive
       live "/link/:id", RlinkxLive
       live "/link/:id/edit", RlinkxLive.Edit
+      live "/links", RlinkxLive.Index
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
     end
