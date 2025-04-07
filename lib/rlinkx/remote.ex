@@ -1,7 +1,9 @@
 defmodule Rlinkx.Remote do
   alias Rlinkx.Accounts.User
-  alias Rlinkx.Remote.{Insight, Bookmark}
+  alias Rlinkx.Remote.Insight
+  alias Rlinkx.Remote.Bookmark
   alias Rlinkx.Repo
+  alias Rlinkx.Remote.UsersBookmarks
 
   import Ecto.Query
 
@@ -44,6 +46,10 @@ defmodule Rlinkx.Remote do
       Phoenix.PubSub.broadcast!(@pubsub, topic(insight.bookmark_id), {:insight_deleted, insight})
     end
 
+  end
+
+  def follow_bookmark(bookmark, user) do
+    Repo.insert!(%UsersBookmarks{bookmark: bookmark, user: user})
   end
 
   def update_link(%Bookmark{} = bookmark, attrs) do
