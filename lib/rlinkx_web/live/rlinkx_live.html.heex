@@ -1,67 +1,67 @@
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-/* create unequal columns that float next to each other */
-.column {
-  float: left;
-  padding: 10px;
-}
-
-/* left column */
-.column.side {
-  width: 25%;
-}
-
-/* middle column */
-.column.middle {
-  width: 50%;
-}
-
-/* right column */
-.column.right {
-  width: 25%;
-}
-
-/* clear floats after the columns */
-.row::after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* group hover blocks */
-.group .group-hover{
-  visibility: hidden;
-}
-
-.group:hover .group-hover{
-  visibility: visible;
-}
-
-.button {
-  background-color: Transparent;
-  border: none;
-  cursor: pointer;
-  leading: none;
-  position: relative;
-}
-
-.dropdown {
-
-}
-
-/* responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .column.side, .column.middle {
-    width: 100%;
+  * {
+    box-sizing: border-box;
   }
-}
+
+  body {
+    margin: 0;
+  }
+
+  /* create unequal columns that float next to each other */
+  .column {
+    float: left;
+    padding: 10px;
+  }
+
+  /* left column */
+  .column.side {
+    width: 25%;
+  }
+
+  /* middle column */
+  .column.middle {
+    width: 50%;
+  }
+
+  /* right column */
+  .column.right {
+    width: 25%;
+  }
+
+  /* clear floats after the columns */
+  .row::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* group hover blocks */
+  .group .group-hover{
+    visibility: hidden;
+  }
+
+  .group:hover .group-hover{
+    visibility: visible;
+  }
+
+  .button {
+    background-color: Transparent;
+    border: none;
+    cursor: pointer;
+    leading: none;
+    position: relative;
+  }
+
+  .dropdown {
+
+  }
+
+  /* responsive layout - makes the three columns stack on top of each other instead of next to each other */
+  @media screen and (max-width: 600px) {
+    .column.side, .column.middle {
+      width: 100%;
+    }
+  }
 </style>
 
 <div class="row">
@@ -70,87 +70,79 @@ body {
   </div>
 
   <div :if={@link} class="column middle">
-    <div> {@link.name} </div>
-    <.link navigate={~p"/link/#{@link}/edit"} > edit </.link>
+    <div>{@link.name}</div>
+    <.link navigate={~p"/link/#{@link}/edit"}> edit </.link>
     <div phx-click="toggle-link">
-      <div :if={!@hide_link?}>  {@link.url_link} </div>
-      <div :if={@hide_link?}>  {@link.description} </div>
+      <div :if={!@hide_link?}>{@link.url_link}</div>
+      <div :if={@hide_link?}>{@link.description}</div>
     </div>
   </div>
-   
+
   <%!-- User info (from Auth) --%>
   <div class="column right">
-    <div> {user_name(@current_user)} </div>
-    <div> <.link href={~p"/users/settings"} > Settings </.link> </div>
-    <div> <.link href={~p"/users/log_out"} method="delete" > Log out </.link> </div>
+    <div>{user_name(@current_user)}</div>
+    <div><.link href={~p"/users/settings"}> Settings </.link></div>
+    <div><.link href={~p"/users/log_out"} method="delete"> Log out </.link></div>
   </div>
-
 </div>
 
-<hr>
+<hr />
 
 <div class="row">
   <div class="column side">
     <.collapsible_list name="bookmarks">
-      <.bookmark_link :for={link <- @links} link={link}/>
+      <.bookmark_link :for={link <- @links} link={link} />
     </.collapsible_list>
     <div>
-    <button
-      class="button"
-      phx-click={JS.toggle(to: "#bookmarks-menu")}
-    > ... </button>
-    <div 
-      id="bookmarks-menu"
-      style="position: absolute;text-indent: 1ch;display: none;"
-      phx-click-away={JS.hide()}
-    >
-      &nbsp;
-      <span
-      style="border: 1px solid;"
+      <button class="button" phx-click={JS.toggle(to: "#bookmarks-menu")}>...</button>
+      <div
+        id="bookmarks-menu"
+        style="position: absolute;text-indent: 1ch;display: none;"
+        phx-click-away={JS.hide()}
       >
-        <.link navigate={~p"/links"}> All Bookmarks </.link>
-      </span>
+        &nbsp;
+        <span style="border: 1px solid;">
+          <.link navigate={~p"/links"}> All Bookmarks </.link>
+        </span>
+      </div>
+
+      <div><br /></div>
     </div>
 
-    <div><br/></div>
-
-    </div>
-    
     <.collapsible_list name="users">
-      <.user
-        :for={user <- @users}
-        user={user}
-        online={online?(@online_users,user)}
-      />
+      <.user :for={user <- @users} user={user} online={online?(@online_users, user)} />
     </.collapsible_list>
   </div>
 
   <div id="insight-list" class="column middle" phx-update="stream">
     <%= if @streams.insights do %>
-    <.insight :for={{dom_id, insight} <- 
-      @streams.insights} 
-      insight={insight} 
-      dom_id={dom_id} 
-      current_user={@current_user}
-      timezone={@timezone}/>
+      <.insight
+        :for={
+          {dom_id, insight} <-
+            @streams.insights
+        }
+        insight={insight}
+        dom_id={dom_id}
+        current_user={@current_user}
+        timezone={@timezone}
+      />
     <% end %>
 
-  <.form
-    id="new-insight-form"
-    for={@new_insight_form}
-    phx-change="validate-insight"
-    phx-submit="submit-insight"
-  >
-    <textarea
-      cols="60"
-      class="grow resize-none"
-      id="insight-textarea"
-      name={@new_insight_form[:body].name}
-      placeholder={"Discuss #{@link.name}"}
-      phx-debounce
-    >{Phoenix.HTML.Form.normalize_value("textarea",@new_insight_form[:body].value)}</textarea>
-    <button> Submit </button>
-  </.form>
-
+    <.form
+      id="new-insight-form"
+      for={@new_insight_form}
+      phx-change="validate-insight"
+      phx-submit="submit-insight"
+    >
+      <textarea
+        cols="60"
+        class="grow resize-none"
+        id="insight-textarea"
+        name={@new_insight_form[:body].name}
+        placeholder={"Discuss #{@link.name}"}
+        phx-debounce
+      >{Phoenix.HTML.Form.normalize_value("textarea",@new_insight_form[:body].value)}</textarea>
+      <button>Submit</button>
+    </.form>
   </div>
 </div>

@@ -595,7 +595,7 @@ defmodule RlinkxWeb.CoreComponents do
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
-    <span class={[@name, @class]} id={@id} style={@style}/>
+    <span class={[@name, @class]} id={@id} style={@style} />
     """
   end
 

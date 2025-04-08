@@ -1,15 +1,15 @@
 defmodule RlinkxWeb.RlinkxLive do
   use RlinkxWeb, :live_view
-  
+
   alias Rlinkx.Accounts
-  alias Rlinkx.Remote.{Bookmark,Insight} 
+  alias Rlinkx.Remote.{Bookmark, Insight}
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote
   alias RlinkxWeb.Online
 
   def mount(_params, _session, socket) do
-    links = Remote.get_all
-    connection_params=get_connect_params(socket)
+    links = Remote.get_all()
+    connection_params = get_connect_params(socket)
     timezone = connection_params["timezone"]
     users = Accounts.all_users()
     Online.subscribe()
@@ -22,40 +22,41 @@ defmodule RlinkxWeb.RlinkxLive do
       Online.track(self(), socket.assigns.current_user)
     end
 
-
-    {:ok, assign(socket,
-      hide_link?: false,
-      links: links,
-      users: users,
-      online_users: online_users,
-      timezone: timezone
-    )}
+    {:ok,
+     assign(socket,
+       hide_link?: false,
+       links: links,
+       users: users,
+       online_users: online_users,
+       timezone: timezone
+     )}
   end
 
   def handle_params(params, _uri, socket) do
     links = socket.assigns.links
     if socket.assigns[:link], do: Remote.unsubscribe_to_link(socket.assigns.link)
 
-    link = case Map.fetch(params, "id") do
-      {:ok, id} -> Enum.find(links, &(to_string(&1.id) == id))
-      
-      :error -> links |> List.first
-    end
+    link =
+      case Map.fetch(params, "id") do
+        {:ok, id} -> Enum.find(links, &(to_string(&1.id) == id))
+        :error -> links |> List.first()
+      end
 
     Remote.subscribe_to_link(link)
-  
-    insights = if link do
-      Remote.list_all_insights(link) 
-    end
+
+    insights =
+      if link do
+        Remote.list_all_insights(link)
+      end
 
     {:noreply,
-      socket
-      |> assign(
-        link: link,
-        page_title: link && link.name
-      )
-      |> stream(:insights, insights, reset: true)
-      |> assign_insight_form(Remote.changeset_insight(%Insight{}))}
+     socket
+     |> assign(
+       link: link,
+       page_title: link && link.name
+     )
+     |> stream(:insights, insights, reset: true)
+     |> assign_insight_form(Remote.changeset_insight(%Insight{}))}
   end
 
   def assign_insight_form(socket, changeset) do
@@ -74,22 +75,26 @@ defmodule RlinkxWeb.RlinkxLive do
   def handle_event("submit-insight", %{"insight" => insight_params}, socket) do
     %{current_user: current_user, link: link} = socket.assigns
 
-    socket = case Remote.create_insight(link, current_user, insight_params) do
-      {:ok, _insight} ->
-        socket
-        |> assign_insight_form(Remote.changeset_insight(%Insight{}))
-      {:error, changeset} ->
-        assign_insight_form(socket, changeset)
-    end
+    socket =
+      case Remote.create_insight(link, current_user, insight_params) do
+        {:ok, _insight} ->
+          socket
+          |> assign_insight_form(Remote.changeset_insight(%Insight{}))
+
+        {:error, changeset} ->
+          assign_insight_form(socket, changeset)
+      end
 
     {:noreply, socket}
   end
 
   def handle_event("delete-insight", %{"id" => id}, socket) do
-      Remote.delete_insight(
-        String.to_integer(id), 
-        socket.assigns.current_user )
-      {:noreply, socket }
+    Remote.delete_insight(
+      String.to_integer(id),
+      socket.assigns.current_user
+    )
+
+    {:noreply, socket}
   end
 
   def handle_info({:insight_created, insight}, socket) do
@@ -109,9 +114,9 @@ defmodule RlinkxWeb.RlinkxLive do
 
   defp bookmark_link(assigns) do
     ~H"""
-      <div>
-        <.link patch={~p"/link/#{@link}"}> {@link.name} </.link>
-      </div>
+    <div>
+      <.link patch={~p"/link/#{@link}"}>{@link.name}</.link>
+    </div>
     """
   end
 
@@ -128,11 +133,11 @@ defmodule RlinkxWeb.RlinkxLive do
         <.link><span>{user_name(@insight.user)}</span></.link>
         <span :if={@timezone}>{insight_timestamp(@insight, @timezone)}</span>
         <p>{@insight.body}</p>
-        <button 
+        <button
+          :if={@insight.user == @current_user}
           class="group-hover"
-          :if={@insight.user == @current_user} 
           phx-click="delete-insight"
-          phx-value-id={@insight.id} 
+          phx-value-id={@insight.id}
           data-confirm="This will be permanent"
         >
           delete
@@ -161,7 +166,7 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   defp insight_timestamp(insight, timezone) do
-    insight.inserted_at 
+    insight.inserted_at
     |> Timex.Timezone.convert(timezone)
     |> Timex.format!("%T", :strftime)
   end
@@ -171,16 +176,16 @@ defmodule RlinkxWeb.RlinkxLive do
 
   defp collapsible_list(assigns) do
     ~H"""
-      <div 
-      id={@name <> "-title"} 
+    <div
+      id={@name <> "-title"}
       phx-click={
         JS.toggle(to: "##{@name}-list")
         |> JS.toggle(to: "##{@name}-expand", display: "inline-block")
         |> JS.toggle(to: "##{@name}-collapse", display: "inline-block")
       }
-    > 
-      <.icon name="hero-minus-micro" id={@name <> "-collapse"} style="display: inline-block"/>
-      <.icon name="hero-plus-micro" id={@name <> "-expand"} style="display: none"/>
+    >
+      <.icon name="hero-minus-micro" id={@name <> "-collapse"} style="display: inline-block" />
+      <.icon name="hero-plus-micro" id={@name <> "-expand"} style="display: none" />
       {String.capitalize(@name)}
     </div>
     <div id={@name <> "-list"}>

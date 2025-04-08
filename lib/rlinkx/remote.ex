@@ -9,7 +9,7 @@ defmodule Rlinkx.Remote do
 
   @pubsub Rlinkx.PubSub
 
-  def get_link!(id) do 
+  def get_link!(id) do
     Repo.get!(Bookmark, id)
   end
 
@@ -29,9 +29,9 @@ defmodule Rlinkx.Remote do
     Insight.changeset(link, attrs)
   end
 
-  def create_insight(link, user, attrs) do 
+  def create_insight(link, user, attrs) do
     with {:ok, insight} <-
-           %Insight{bookmark: link, user: user} 
+           %Insight{bookmark: link, user: user}
            |> Insight.changeset(attrs)
            |> Repo.insert() do
       Phoenix.PubSub.broadcast!(@pubsub, topic(link.id), {:insight_created, insight})
@@ -40,12 +40,12 @@ defmodule Rlinkx.Remote do
   end
 
   def delete_insight(id, %User{id: user_id}) do
-    insight = Repo.get!(Insight,id, preload: :user)
-    if insight.user_id  == user_id do
+    insight = Repo.get!(Insight, id, preload: :user)
+
+    if insight.user_id == user_id do
       Repo.delete!(insight)
       Phoenix.PubSub.broadcast!(@pubsub, topic(insight.bookmark_id), {:insight_deleted, insight})
     end
-
   end
 
   def follow_bookmark(bookmark, user) do

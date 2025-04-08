@@ -18,11 +18,12 @@ alias Rlinkx.Repo
 # from https://dev.to/diogoko/random-strings-in-elixir-e8i
 pw = for _ <- 1..20, into: "", do: <<:crypto.rand_uniform(0, 256)>>
 
-my_user = Accounts.register_user(
-  %{email: "admin@codingparadigms.com",
+my_user =
+  Accounts.register_user(%{
+    email: "admin@codingparadigms.com",
     password: pw,
-    password_confirmation: pw}
-)
+    password_confirmation: pw
+  })
 
 link1 = %Bookmark{
   name: "Elixir Docs",

@@ -1,7 +1,7 @@
 defmodule Rlinkx.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  
+
   alias Rlinkx.Remote.{Bookmark, UsersBookmarks}
 
   schema "users" do
