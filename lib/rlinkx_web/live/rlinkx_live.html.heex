@@ -128,21 +128,23 @@
       />
     <% end %>
 
-    <.form
-      id="new-insight-form"
-      for={@new_insight_form}
-      phx-change="validate-insight"
-      phx-submit="submit-insight"
-    >
-      <textarea
-        cols="60"
-        class="grow resize-none"
-        id="insight-textarea"
-        name={@new_insight_form[:body].name}
-        placeholder={"Discuss #{@link.name}"}
-        phx-debounce
-      >{Phoenix.HTML.Form.normalize_value("textarea",@new_insight_form[:body].value)}</textarea>
-      <button>Submit</button>
-    </.form>
+    <div :if={@following?}>
+      <.form
+        id="new-insight-form"
+        for={@new_insight_form}
+        phx-change="validate-insight"
+        phx-submit="submit-insight"
+      >
+        <textarea
+          cols="60"
+          class="grow resize-none"
+          id="insight-textarea"
+          name={@new_insight_form[:body].name}
+          placeholder={"Discuss #{@link.name}"}
+          phx-debounce
+        >{Phoenix.HTML.Form.normalize_value("textarea",@new_insight_form[:body].value)}</textarea>
+        <button>Submit</button>
+      </.form>
+    </div>
   </div>
 </div>

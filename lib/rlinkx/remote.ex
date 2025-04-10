@@ -13,8 +13,21 @@ defmodule Rlinkx.Remote do
     Repo.get!(Bookmark, id)
   end
 
+  def get_followed_links(%User{} = user) do
+    user
+    |> Repo.preload(:bookmarks)
+    |> Map.fetch!(:bookmarks)
+    |> Enum.sort_by(& &1.name)
+  end
+
   def get_all do
     Repo.all(from Bookmark, order_by: :name)
+  end
+
+  def following?(%Bookmark{} = bookmark, %User{} = user) do
+    Repo.exists?(
+      from ub in UsersBookmarks, where: ub.bookmark_id == ^bookmark.id and ub.user_id == ^user.id
+    )
   end
 
   def list_all_insights(%Bookmark{id: bookmark_id}) do

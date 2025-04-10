@@ -8,7 +8,7 @@ defmodule RlinkxWeb.RlinkxLive do
   alias RlinkxWeb.Online
 
   def mount(_params, _session, socket) do
-    links = Remote.get_all()
+    links = Remote.get_followed_links(socket.assigns.current_user)
     connection_params = get_connect_params(socket)
     timezone = connection_params["timezone"]
     users = Accounts.all_users()
@@ -38,10 +38,11 @@ defmodule RlinkxWeb.RlinkxLive do
 
     link =
       case Map.fetch(params, "id") do
-        {:ok, id} -> Enum.find(links, &(to_string(&1.id) == id))
+        {:ok, id} -> Remote.get_link!(id)
         :error -> links |> List.first()
       end
 
+    following? = Remote.following?(link, socket.assigns.current_user)
     Remote.subscribe_to_link(link)
 
     insights =
@@ -53,6 +54,7 @@ defmodule RlinkxWeb.RlinkxLive do
      socket
      |> assign(
        link: link,
+       following?: following?,
        page_title: link && link.name
      )
      |> stream(:insights, insights, reset: true)
@@ -76,13 +78,17 @@ defmodule RlinkxWeb.RlinkxLive do
     %{current_user: current_user, link: link} = socket.assigns
 
     socket =
-      case Remote.create_insight(link, current_user, insight_params) do
-        {:ok, _insight} ->
-          socket
-          |> assign_insight_form(Remote.changeset_insight(%Insight{}))
+      if Remote.following?(link, current_user) do
+        case Remote.create_insight(link, current_user, insight_params) do
+          {:ok, _insight} ->
+            socket
+            |> assign_insight_form(Remote.changeset_insight(%Insight{}))
 
-        {:error, changeset} ->
-          assign_insight_form(socket, changeset)
+          {:error, changeset} ->
+            assign_insight_form(socket, changeset)
+        end
+      else
+        socket
       end
 
     {:noreply, socket}
