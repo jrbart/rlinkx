@@ -71,7 +71,13 @@
 
   <div :if={@link} class="column middle">
     <div>{@link.name}</div>
-    <.link navigate={~p"/link/#{@link}/edit"}> edit </.link>
+    <div>
+      <%= if @following? do %>
+        <.link navigate={~p"/link/#{@link}/edit"}> edit bookmark </.link>
+      <% else %>
+        <.link phx-click="follow-bookmark"> follow bookmark </.link>
+      <% end %>
+    </div>
     <div phx-click="toggle-link">
       <div :if={!@hide_link?}>{@link.url_link}</div>
       <div :if={@hide_link?}>{@link.description}</div>

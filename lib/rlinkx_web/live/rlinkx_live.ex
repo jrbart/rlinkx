@@ -42,6 +42,7 @@ defmodule RlinkxWeb.RlinkxLive do
         :error -> links |> List.first()
       end
 
+    # NOTE: we could save a db query by checking if link is in links. but explicit is better?
     following? = Remote.following?(link, socket.assigns.current_user)
     Remote.subscribe_to_link(link)
 
@@ -67,6 +68,19 @@ defmodule RlinkxWeb.RlinkxLive do
 
   def handle_event("toggle-link", _params, socket) do
     {:noreply, update(socket, :hide_link?, &(!&1))}
+  end
+
+  def handle_event("follow-bookmark", _params, socket) do
+    user = socket.assigns.current_user
+
+    socket =
+      if Remote.follow_bookmark(socket.assigns.link, user) do
+        socket
+        |> assign(links: Remote.get_followed_links(user))
+        |> assign(following?: true)
+      end
+
+    {:noreply, socket}
   end
 
   def handle_event("validate-insight", %{"insight" => insight_params}, socket) do

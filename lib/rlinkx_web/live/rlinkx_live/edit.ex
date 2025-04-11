@@ -7,13 +7,19 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
   def mount(%{"id" => id} = _params, _session, socket) do
     link = Remote.get_link!(id)
 
-    changeset = Remote.change_link(link)
-
     socket =
-      socket
-      |> assign(page_title: "Edit Link")
-      |> assign(link: link)
-      |> assign_form(changeset)
+      if Remote.following?(link, socket.assigns.current_user) do
+        changeset = Remote.change_link(link)
+
+        socket
+        |> assign(page_title: "Edit Link")
+        |> assign(link: link)
+        |> assign_form(changeset)
+      else
+        socket
+        |> put_flash(:error, "Please follow the bookmark to edit it")
+        |> push_navigate(to: ~p"/")
+      end
 
     {:ok, socket}
   end
