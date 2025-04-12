@@ -33,14 +33,12 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   def handle_params(params, _uri, socket) do
-    links = socket.assigns.links
     if socket.assigns[:link], do: Remote.unsubscribe_to_link(socket.assigns.link)
 
     link =
-      case Map.fetch(params, "id") do
-        {:ok, id} -> Remote.get_link!(id)
-        :error -> links |> List.first()
-      end
+      params
+      |> Map.fetch!("id")
+      |> Remote.get_link!()
 
     # NOTE: we could save a db query by checking if link is in links. but explicit is better?
     following? = Remote.following?(link, socket.assigns.current_user)

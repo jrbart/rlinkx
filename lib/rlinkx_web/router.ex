@@ -1,4 +1,5 @@
 defmodule RlinkxWeb.Router do
+  alias Rlinkx.Remote.Bookmark
   use RlinkxWeb, :router
 
   import RlinkxWeb.UserAuth
@@ -58,9 +59,10 @@ defmodule RlinkxWeb.Router do
   scope "/", RlinkxWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    get "/", BookmarkController, :redirect_if_nil
+
     live_session :require_authenticated_user,
       on_mount: [{RlinkxWeb.UserAuth, :ensure_authenticated}] do
-      live "/", RlinkxLive
       live "/link/:id", RlinkxLive
       live "/link/:id/edit", RlinkxLive.Edit
       live "/links", RlinkxLive.Index
