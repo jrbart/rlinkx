@@ -3,7 +3,7 @@
   <br />
 
   <div id="bookmark-list">
-    <div :for={{id, link} <- @streams.links} id={id}>
+    <div :for={{id, {link, following?}} <- @streams.links} id={id}>
       <span
         name={id}
         id={"checkbox-" <> id}
@@ -12,12 +12,20 @@
           |> JS.toggle(to: "##{id}-collapse", display: "inline-block")
         }
       >
+        <%= if following? do %>
+        <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: none" />
+        <.icon name="hero-check-micro" id={id <> "-expand"} style="display: inline-block" />
+        <% else %>
         <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: inline-block" />
         <.icon name="hero-check-micro" id={id <> "-expand"} style="display: none" />
+        <% end %>
       </span>
       <.link navigate={~p"/link/#{link}"}>
         {link.name}
       </.link>
+      <spam>
+        {link.description}
+      </spam>
     </div>
   </div>
 </main>

@@ -20,6 +20,18 @@ defmodule Rlinkx.Remote do
     |> Enum.sort_by(& &1.name)
   end
 
+  def get_links_and_following(%User{} = user) do
+    query =
+      from b in Bookmark,
+        left_join: u in UsersBookmarks,
+        on: b.id == u.bookmark_id
+          and u.user_id == ^user.id,
+      select: {b, not is_nil(u.id)},
+      order_by: [asc: :name]
+
+    Repo.all(query)
+  end
+
   def get_all do
     Repo.all(from Bookmark, order_by: :name)
   end
