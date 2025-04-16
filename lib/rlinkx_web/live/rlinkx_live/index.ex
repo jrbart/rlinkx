@@ -14,4 +14,14 @@ defmodule RlinkxWeb.RlinkxLive.Index do
 
     {:ok, socket}
   end
+
+  def handle_event("toggle-following", %{"id" => id}, socket) do
+    {link, following?} = 
+    id
+    |> Remote.get_link!()
+    |> Remote.toggle_following_bookmark(socket.assigns.current_user)
+
+    {:noreply, stream_insert(socket, :links, {link, following?})}
+
+  end
 end

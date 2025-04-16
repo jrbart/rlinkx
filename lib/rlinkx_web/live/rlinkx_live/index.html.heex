@@ -2,15 +2,13 @@
   {@page_title}
   <br />
 
-  <div id="bookmark-list">
+  <div id="bookmark-list" phx-update="stream">
     <div :for={{id, {link, following?}} <- @streams.links} id={id}>
       <span
         name={id}
         id={"checkbox-" <> id}
-        phx-click={
-          JS.toggle(to: "##{id}-expand", display: "inline-block")
-          |> JS.toggle(to: "##{id}-collapse", display: "inline-block")
-        }
+        phx-value-id={link.id}
+        phx-click="toggle-following"
       >
         <%= if following? do %>
         <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: none" />

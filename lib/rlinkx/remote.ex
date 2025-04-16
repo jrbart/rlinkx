@@ -1,4 +1,5 @@
 defmodule Rlinkx.Remote do
+  alias Ecto.Repo
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote.Insight
   alias Rlinkx.Remote.Bookmark
@@ -75,6 +76,16 @@ defmodule Rlinkx.Remote do
 
   def follow_bookmark(bookmark, user) do
     Repo.insert!(%UsersBookmarks{bookmark: bookmark, user: user})
+  end
+
+  def toggle_following_bookmark(bookmark, user) do
+    case Repo.get_by(UsersBookmarks, bookmark_id: bookmark.id, user_id: user.id) do
+      nil -> follow_bookmark(bookmark, user)
+        {bookmark, true}
+
+      follow -> Repo.delete!(follow)
+        {bookmark, false}
+    end
   end
 
   def update_link(%Bookmark{} = bookmark, attrs) do
