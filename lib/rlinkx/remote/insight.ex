@@ -1,8 +1,9 @@
 defmodule Rlinkx.Remote.Insight do
   use Ecto.Schema
+  import Ecto.Changeset
+
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote.Bookmark
-  import Ecto.Changeset
 
   schema "insights" do
     field :body, :string
