@@ -121,17 +121,23 @@
   </div>
 
   <div id="insight-list" class="column middle" phx-update="stream">
-    <%= if @streams.insights do %>
-      <.insight
-        :for={
-          {dom_id, insight} <-
-            @streams.insights
-        }
-        insight={insight}
-        dom_id={dom_id}
-        current_user={@current_user}
-        timezone={@timezone}
-      />
+    <div id="insights-empty" class="only-child hidden">
+      No insights here...
+    </div>
+    <%= for {dom_id, insight} <- @streams.insights do %>
+      <%= case insight do %>
+        <% %Insight{} -> %>
+          <.insight
+            insight={insight}
+            dom_id={dom_id}
+            current_user={@current_user}
+            timezone={@timezone}
+          />
+        <% _ -> %>
+          <div id={dom_id} class="group">
+            <hr />
+          </div>
+      <% end %>
     <% end %>
 
     <div :if={@following?}>

@@ -4,7 +4,7 @@ defmodule Rlinkx.Remote.UsersBookmarks do
   import Ecto.Query
 
   alias Rlinkx.Repo
-  
+
   alias __MODULE__
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote.Bookmark
@@ -27,15 +27,21 @@ defmodule Rlinkx.Remote.UsersBookmarks do
   end
 
   def get_following(%User{} = user, %Bookmark{} = bookmark) do
-    Repo.get_by(UsersBookmarks, user_id: user.id, bookmark_id: bookmark.id) 
+    Repo.get_by(UsersBookmarks, user_id: user.id, bookmark_id: bookmark.id)
   end
 
   def update_last_read(%UsersBookmarks{} = user_bookmark) do
-    timestamp = 
-      from(i in Insight, where: i.bookmark_id == ^user_bookmark.bookmark_id, select: max(i.inserted_at) ) 
-      |> Repo.one
+    timestamp =
+      from(i in Insight,
+        where: i.bookmark_id == ^user_bookmark.bookmark_id,
+        select: max(i.inserted_at)
+      )
+      |> Repo.one()
+
     user_bookmark
     |> change(last_read_at: timestamp)
     |> Repo.update()
+
+    timestamp
   end
 end

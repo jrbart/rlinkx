@@ -4,18 +4,13 @@
 
   <div id="bookmark-list" phx-update="stream">
     <div :for={{id, {link, following?}} <- @streams.links} id={id}>
-      <span
-        name={id}
-        id={"checkbox-" <> id}
-        phx-value-id={link.id}
-        phx-click="toggle-following"
-      >
+      <span name={id} id={"checkbox-" <> id} phx-value-id={link.id} phx-click="toggle-following">
         <%= if following? do %>
-        <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: none" />
-        <.icon name="hero-check-micro" id={id <> "-expand"} style="display: inline-block" />
+          <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: none" />
+          <.icon name="hero-check-micro" id={id <> "-expand"} style="display: inline-block" />
         <% else %>
-        <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: inline-block" />
-        <.icon name="hero-check-micro" id={id <> "-expand"} style="display: none" />
+          <.icon name="hero-minus-micro" id={id <> "-collapse"} style="display: inline-block" />
+          <.icon name="hero-check-micro" id={id <> "-expand"} style="display: none" />
         <% end %>
       </span>
       <.link navigate={~p"/link/#{link}"}>

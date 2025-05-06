@@ -5,6 +5,5 @@ defmodule Rlinkx.Repo.Migrations.AddLastReadToUserBookmarks do
     alter table("users_bookmarks") do
       add :last_read_at, :utc_datetime
     end
-
   end
 end

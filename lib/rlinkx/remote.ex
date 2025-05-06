@@ -24,10 +24,11 @@ defmodule Rlinkx.Remote do
     query =
       from b in Bookmark,
         left_join: u in UsersBookmarks,
-        on: b.id == u.bookmark_id
-          and u.user_id == ^user.id,
-      select: {b, not is_nil(u.id)},
-      order_by: [asc: :name]
+        on:
+          b.id == u.bookmark_id and
+            u.user_id == ^user.id,
+        select: {b, not is_nil(u.id)},
+        order_by: [asc: :name]
 
     Repo.all(query)
   end
@@ -79,19 +80,27 @@ defmodule Rlinkx.Remote do
 
   def toggle_following_bookmark(bookmark, user) do
     case UsersBookmarks.get_following(user, bookmark) do
-      nil -> follow_bookmark(bookmark, user)
+      nil ->
+        follow_bookmark(bookmark, user)
         {bookmark, true}
 
-      follow -> Repo.delete!(follow)
+      follow ->
+        Repo.delete!(follow)
         {bookmark, false}
     end
-  end 
+  end
 
   def update_last_read(bookmark, user) do
     case UsersBookmarks.get_following(user, bookmark) do
       nil -> nil
-
       follow -> UsersBookmarks.update_last_read(follow)
+    end
+  end
+
+  def get_last_read_at(%Bookmark{} = bookmark, user) do
+    case UsersBookmarks.get_following(user, bookmark) do
+      nil -> nil
+      follow -> follow.last_read_at
     end
   end
 

@@ -23,12 +23,20 @@ defmodule RlinkxWeb.RlinkxLive do
     end
 
     {:ok,
-     assign(socket,
+     socket
+     |> assign(
        hide_link?: false,
        links: links,
        users: users,
        online_users: online_users,
        timezone: timezone
+     )
+     |> stream_configure(
+       :insights,
+       dom_id: fn
+         %Insight{id: id} -> "insight-#{id}"
+         :unread_marker -> "insight-unread-marker"
+       end
      )}
   end
 
@@ -40,14 +48,21 @@ defmodule RlinkxWeb.RlinkxLive do
       |> Map.fetch!("id")
       |> Remote.get_link!()
 
-    # NOTE: we could save a db query by checking if link is in links. but explicit is better?
-    following? = Remote.following?(link, socket.assigns.current_user)
-    Remote.subscribe_to_link(link)
+    last_read_at = Remote.get_last_read_at(link, socket.assigns.current_user)
 
     insights =
-      if link do
-        Remote.list_all_insights(link)
-      end
+      link
+      |> Remote.list_all_insights()
+      |> maybe_insert_unread_marker(last_read_at)
+      |> IO.inspect()
+
+    following? = Remote.following?(link, socket.assigns.current_user)
+
+    if following? do
+      Remote.update_last_read(link, socket.assigns.current_user)
+    end
+
+    Remote.subscribe_to_link(link)
 
     {:noreply,
      socket
@@ -62,6 +77,19 @@ defmodule RlinkxWeb.RlinkxLive do
 
   def assign_insight_form(socket, changeset) do
     assign(socket, :new_insight_form, to_form(changeset))
+  end
+
+  def maybe_insert_unread_marker(insights, nil), do: insights
+
+  def maybe_insert_unread_marker(insights, last_read_at) do
+    {read, unread} =
+      Enum.split_while(insights, &(DateTime.compare(&1.inserted_at, last_read_at) != :gt))
+
+    if unread == [] do
+      read ++ [:unread_marker]
+    else
+      read ++ [:unread_marker | unread]
+    end
   end
 
   def handle_event("toggle-link", _params, socket) do
