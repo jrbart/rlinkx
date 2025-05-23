@@ -13,6 +13,9 @@ defmodule Rlinkx.Remote.Bookmark do
 
     many_to_many :users, User, join_through: UsersBookmarks
 
+    # explicitly expose followers from join table
+    # so we can count unread messages from other users
+    has_many :followers, UsersBookmarks
     has_many :insights, Insight
 
     timestamps(type: :utc_datetime)

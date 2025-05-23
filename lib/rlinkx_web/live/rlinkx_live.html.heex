@@ -97,7 +97,11 @@
 <div class="row">
   <div class="column side">
     <.collapsible_list name="bookmarks">
-      <.bookmark_link :for={link <- @links} link={link} />
+      <.bookmark_link
+        :for={{link, unread_count} <- @links}
+        link={link}
+        unread_count={unread_count}
+      />
     </.collapsible_list>
     <div>
       <button class="button" phx-click={JS.toggle(to: "#bookmarks-menu")}>...</button>

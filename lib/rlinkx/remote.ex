@@ -20,6 +20,19 @@ defmodule Rlinkx.Remote do
     |> Enum.sort_by(& &1.name)
   end
 
+  def get_followed_links_with_unread_count(%User{} = user) do
+    from(bookmark in Bookmark,
+      join: followers in assoc(bookmark, :followers),
+      where: followers.user_id == ^user.id,
+      left_join: insight in assoc(bookmark, :insights),
+      on: insight.inserted_at > followers.last_read_at,
+      group_by: bookmark.id,
+      select: {bookmark, count(insight.id)},
+      order_by: [asc: bookmark.name]
+    )
+    |> Repo.all()
+  end
+
   def get_links_and_following(%User{} = user) do
     query =
       from b in Bookmark,
