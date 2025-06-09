@@ -7,12 +7,4 @@
   </:actions>
 </.header>
 <br />
-
-<.simple_form for={@form} id="room-form" phx-change="validate-link" phx-submit="save-link">
-  <.input field={@form[:name]} type="text" label="Name" phx-debounce />
-  <.input field={@form[:description]} type="textarea" label="Description" phx-debounce />
-  <.input field={@form[:url_link]} type="text" label="Link" phx-debounce />
-  <:actions>
-    <.button phx-disable-with="Saving...">Save</.button>
-  </:actions>
-</.simple_form>
+<.bookmark_form form={@form} />

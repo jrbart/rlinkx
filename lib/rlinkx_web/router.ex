@@ -64,6 +64,7 @@ defmodule RlinkxWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{RlinkxWeb.UserAuth, :ensure_authenticated}] do
       live "/link/:id", RlinkxLive
+      live "/link/:id/new", RlinkxLive, :new
       live "/link/:id/edit", RlinkxLive.Edit
       live "/links", RlinkxLive.Index
       live "/users/settings", UserSettingsLive, :edit

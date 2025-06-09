@@ -117,6 +117,12 @@ defmodule Rlinkx.Remote do
     end
   end
 
+  def create_link(attrs) do
+    %Bookmark{}
+    |> Bookmark.changeset(attrs)
+    |> Repo.insert()
+  end
+
   def update_link(%Bookmark{} = bookmark, attrs) do
     bookmark
     |> Bookmark.changeset(attrs)

@@ -4,6 +4,8 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
   # alias Rlinkx.Remote.Bookmark 
   alias Rlinkx.Remote
 
+  import RlinkxWeb.BookmarkComponents
+
   def mount(%{"id" => id} = _params, _session, socket) do
     link = Remote.get_link!(id)
 
@@ -24,7 +26,7 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
     {:ok, socket}
   end
 
-  def handle_event("validate-link", %{"bookmark" => new_params}, socket) do
+  def handle_event("validate-bookmark", %{"bookmark" => new_params}, socket) do
     link =
       socket.assigns.link
       |> Remote.change_link(new_params)
@@ -35,7 +37,7 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
     {:noreply, assign_form(socket, changeset)}
   end
 
-  def handle_event("save-link", %{"bookmark" => new_params}, socket) do
+  def handle_event("save-bookmark", %{"bookmark" => new_params}, socket) do
     case Remote.update_link(socket.assigns.link, new_params) do
       {:ok, link} ->
         {:noreply,

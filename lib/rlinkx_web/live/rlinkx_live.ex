@@ -6,6 +6,7 @@ defmodule RlinkxWeb.RlinkxLive do
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote
   alias RlinkxWeb.Online
+  import RlinkxWeb.BookmarkComponents
 
   def mount(_params, _session, socket) do
     links = Remote.get_followed_links_with_unread_count(socket.assigns.current_user)
@@ -33,7 +34,8 @@ defmodule RlinkxWeb.RlinkxLive do
        links: links,
        users: users,
        online_users: online_users,
-       timezone: timezone
+       timezone: timezone,
+       new_bookmark_form: to_form(Remote.change_link(%Bookmark{}))
      )
      |> stream_configure(
        :insights,
@@ -68,7 +70,8 @@ defmodule RlinkxWeb.RlinkxLive do
      |> assign(
        link: link,
        following?: following?,
-       page_title: link && link.name
+       # link has to exist or else get_link would have raised
+       page_title: link.name
      )
      |> stream(:insights, insights, reset: true)
      |> assign_insight_form(Remote.changeset_insight(%Insight{}))
@@ -142,6 +145,30 @@ defmodule RlinkxWeb.RlinkxLive do
     {:noreply, socket}
   end
 
+  def handle_event("validate-bookmark", %{"bookmark" => new_params}, socket) do
+    changeset =
+      socket.assigns.link
+      |> Remote.change_link(new_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign_form(socket, changeset)}
+  end
+
+  def handle_event("save-bookmark", %{"bookmark" => new_params}, socket) do
+    case Remote.create_link(new_params) do
+      {:ok, link} ->
+        Remote.follow_bookmark(link, socket.assigns.current_user)
+
+        {:noreply,
+         socket
+         |> put_flash(:info, "Link created successfully")
+         |> push_navigate(to: ~p"/link/#{link}")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
+    end
+  end
+
   def handle_event("delete-insight", %{"id" => id}, socket) do
     Remote.delete_insight(
       String.to_integer(id),
@@ -195,6 +222,10 @@ defmodule RlinkxWeb.RlinkxLive do
   def handle_info(%{event: "presence_diff", payload: diff}, socket) do
     online_users = Online.update(socket.assigns.online_users, diff)
     {:noreply, assign(socket, online_users: online_users)}
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, form: to_form(changeset))
   end
 
   attr :link, Bookmark, required: true
@@ -291,5 +322,11 @@ defmodule RlinkxWeb.RlinkxLive do
       {render_slot(@inner_block)}
     </div>
     """
+  end
+
+  def show_modal(js \\ %JS{}, id) when is_binary(id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.focus_first(to: "##{id}-container")
   end
 end

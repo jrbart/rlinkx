@@ -49,11 +49,6 @@
     border: none;
     cursor: pointer;
     leading: none;
-    position: relative;
-  }
-
-  .dropdown {
-
   }
 
   /* responsive layout - makes the three columns stack on top of each other instead of next to each other */
@@ -105,15 +100,11 @@
     </.collapsible_list>
     <div>
       <button class="button" phx-click={JS.toggle(to: "#bookmarks-menu")}>...</button>
-      <div
-        id="bookmarks-menu"
-        style="position: absolute;text-indent: 1ch;display: none;"
-        phx-click-away={JS.hide()}
-      >
-        &nbsp;
-        <span style="border: 1px solid;">
-          <.link navigate={~p"/links"}> All Bookmarks </.link>
-        </span>
+      <div id="bookmarks-menu" style="display: none;" phx-click-away={JS.hide()}>
+        <div id="bookmarks-menu-content">
+          <.link class="block" navigate={~p"/links"}> All Bookmarks </.link>
+          <.link class="block" navigate={~p"/link/#{@link}/new"}> New Bookmark </.link>
+        </div>
       </div>
 
       <div><br /></div>
@@ -125,7 +116,7 @@
   </div>
 
   <div id="insight-list" class="column middle" phx-update="stream">
-    <div id="insights-empty" class="only-child hidden">
+    <div id="insights-empty" class="only:div hidden">
       No insights here...
     </div>
     <%= for {dom_id, insight} <- @streams.insights do %>
@@ -164,3 +155,8 @@
     </div>
   </div>
 </div>
+
+<.modal show={@live_action == :new} id="new-bookmark-modal">
+  <.header>New bookmark</.header>
+  <.bookmark_form form={@new_bookmark_form} />
+</.modal>
