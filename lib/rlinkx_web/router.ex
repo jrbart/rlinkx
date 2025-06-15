@@ -1,5 +1,5 @@
 defmodule RlinkxWeb.Router do
-  alias Rlinkx.Remote.Bookmark
+  # alias Rlinkx.Remote.Bookmark
   use RlinkxWeb, :router
 
   import RlinkxWeb.UserAuth
