@@ -287,8 +287,7 @@ defmodule RlinkxWeb.RlinkxLive do
   end
 
   defp user_name(user) do
-    [name | _] = String.split(user.email, "@")
-    name
+    user.username
   end
 
   defp online?(online_users, user) do
