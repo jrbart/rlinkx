@@ -8,7 +8,7 @@ defmodule Rlinkx.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Rlinkx", "contact@example.com"})
+      |> from({"Rlinkx", "jorabart@gmail.com"})
       |> subject(subject)
       |> text_body(body)
 

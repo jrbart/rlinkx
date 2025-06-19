@@ -3,18 +3,20 @@ defmodule Rlinkx.Repo.Migrations.AddUsernameColumnToUsers do
 
   def change do
     alter table(:users) do
-      add :username, :citext #, null: false
+      # , null: false
+      add :username, :citext
     end
 
-  execute """
-          UPDATE users
-          SET username = CONCAT(substring(email FROM '^[^@]+'), users.id);
-          """, ""
+    execute """
+            UPDATE users
+            SET username = CONCAT(substring(email FROM '^[^@]+'), users.id);
+            """,
+            ""
 
-  alter table(:users) do
-    modify :username, :citext, null: false, from: {:citext, null: true}
-  end
+    alter table(:users) do
+      modify :username, :citext, null: false, from: {:citext, null: true}
+    end
 
-  create unique_index(:users, :username)
+    create unique_index(:users, :username)
   end
 end

@@ -59,7 +59,9 @@ defmodule Rlinkx.Accounts.User do
   defp validate_username(changeset, opts) do
     changeset
     |> validate_required([:username])
-    |> validate_format(:username, ~r/^[[:alnum:]-]+$/, message: "only alphanumeric chars and dashed")
+    |> validate_format(:username, ~r/^[[:alnum:]-]+$/,
+      message: "only alphanumeric chars and dashed"
+    )
     |> validate_length(:username, max: 20)
     |> maybe_validate_unique_username(opts)
   end
