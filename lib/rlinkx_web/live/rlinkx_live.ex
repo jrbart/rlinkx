@@ -151,7 +151,7 @@ defmodule RlinkxWeb.RlinkxLive do
       |> Remote.change_link(new_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply, assign_bookmark_form(socket, changeset)}
   end
 
   def handle_event("save-bookmark", %{"bookmark" => new_params}, socket) do
@@ -165,7 +165,7 @@ defmodule RlinkxWeb.RlinkxLive do
          |> push_navigate(to: ~p"/link/#{link}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign_bookmark_form(socket, changeset)}
     end
   end
 
@@ -224,8 +224,8 @@ defmodule RlinkxWeb.RlinkxLive do
     {:noreply, assign(socket, online_users: online_users)}
   end
 
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, form: to_form(changeset))
+  defp assign_bookmark_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :new_bookmark_form, to_form(changeset))
   end
 
   attr :link, Bookmark, required: true
