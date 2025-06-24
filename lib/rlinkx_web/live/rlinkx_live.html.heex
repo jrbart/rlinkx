@@ -128,6 +128,10 @@
             current_user={@current_user}
             timezone={@timezone}
           />
+        <% %Date{} -> %>
+          <div id={dom_id} class="group">
+            {Date.to_string(insight)}
+          </div>
         <% _ -> %>
           <div id={dom_id} class="group">
             <hr />

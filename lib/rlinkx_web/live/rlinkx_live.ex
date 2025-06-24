@@ -42,6 +42,7 @@ defmodule RlinkxWeb.RlinkxLive do
        dom_id: fn
          %Insight{id: id} -> "insight-#{id}"
          :unread_marker -> "insight-unread-marker"
+         %Date{} = date -> to_string(date)
        end
      )}
   end
@@ -57,6 +58,7 @@ defmodule RlinkxWeb.RlinkxLive do
     insights =
       link
       |> Remote.list_all_insights()
+      |> insert_date_dividers(socket.assigns.timezone)
       |> maybe_insert_unread_marker(last_read_at)
 
     following? = Remote.following?(link, socket.assigns.current_user)
@@ -90,11 +92,28 @@ defmodule RlinkxWeb.RlinkxLive do
     assign(socket, :new_insight_form, to_form(changeset))
   end
 
+  # sort insights, shift to timezone, and insert date every time the date changes
+  defp insert_date_dividers(insights, nil), do: insights
+
+  defp insert_date_dividers(insights, timezone) do
+    insights
+    |> Enum.group_by(fn insight ->
+      insight.inserted_at
+      |> DateTime.shift_zone!(timezone)
+      |> DateTime.to_date()
+    end )
+    |> Enum.sort_by(fn {date, _insgts} -> date end, &(Date.compare(&1, &2) != :gt))
+    |> Enum.flat_map(fn {date, insights} -> [date | insights] end)
+  end
+
   def maybe_insert_unread_marker(insights, nil), do: insights
 
   def maybe_insert_unread_marker(insights, last_read_at) do
     {read, unread} =
-      Enum.split_while(insights, &(DateTime.compare(&1.inserted_at, last_read_at) != :gt))
+      Enum.split_while(insights, fn 
+        %Insight{} = insight -> DateTime.compare(insight.inserted_at, last_read_at) != :gt
+        _ -> true
+      end)
 
     if unread == [] do
       read ++ [:unread_marker]
