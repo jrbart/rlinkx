@@ -20,7 +20,7 @@ defmodule RlinkxWeb.UserSessionController do
   end
 
   defp create(conn, %{"user" => user_params}, info) do
-    %{"login" => login, "password" => password} = user_params
+    %{"email_or_username" => login, "password" => password} = user_params
 
     if user = Accounts.get_authenticated_user(login, password) do
       conn
