@@ -6,7 +6,6 @@ defmodule RlinkxWeb.RlinkxLive do
   alias Rlinkx.Accounts.User
   alias Rlinkx.Remote
   alias RlinkxWeb.Online
-  import RlinkxWeb.BookmarkComponents
 
   def mount(_params, _session, socket) do
     links = Remote.get_followed_links_with_unread_count(socket.assigns.current_user)
@@ -164,30 +163,6 @@ defmodule RlinkxWeb.RlinkxLive do
     {:noreply, socket}
   end
 
-  def handle_event("validate-bookmark", %{"bookmark" => new_params}, socket) do
-    changeset =
-      socket.assigns.link
-      |> Remote.change_link(new_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_bookmark_form(socket, changeset)}
-  end
-
-  def handle_event("save-bookmark", %{"bookmark" => new_params}, socket) do
-    case Remote.create_link(new_params) do
-      {:ok, link} ->
-        Remote.follow_bookmark(link, socket.assigns.current_user)
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Link created successfully")
-         |> push_navigate(to: ~p"/link/#{link}")}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_bookmark_form(socket, changeset)}
-    end
-  end
-
   def handle_event("delete-insight", %{"id" => id}, socket) do
     Remote.delete_insight(
       String.to_integer(id),
@@ -241,10 +216,6 @@ defmodule RlinkxWeb.RlinkxLive do
   def handle_info(%{event: "presence_diff", payload: diff}, socket) do
     online_users = Online.update(socket.assigns.online_users, diff)
     {:noreply, assign(socket, online_users: online_users)}
-  end
-
-  defp assign_bookmark_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :new_bookmark_form, to_form(changeset))
   end
 
   attr :link, Bookmark, required: true

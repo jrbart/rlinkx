@@ -162,5 +162,9 @@
 
 <.modal show={@live_action == :new} id="new-bookmark-modal">
   <.header>New bookmark</.header>
-  <.bookmark_form form={@new_bookmark_form} />
+  <.live_component 
+    module={RlinkxWeb.RlinkxLive.FormComponent}
+    id="new-bookmark-form-component"
+    current_user={@current_user}
+  />
 </.modal>

@@ -1,5 +1,10 @@
 <main>
   {@page_title}
+  <button
+    phx-click={show_modal("new-bookmark-modal")}
+  >
+    Create Bookmark
+  </button>
   <br />
 
   <div id="bookmark-list" phx-update="stream">
@@ -21,4 +26,13 @@
       </spam>
     </div>
   </div>
+
+  <.modal id="new-bookmark-modal">
+    <.header>New bookmark</.header>
+    <.live_component 
+      module={RlinkxWeb.RlinkxLive.FormComponent}
+      id="new-bookmark-form-component"
+      current_user={@current_user}
+    />
+  </.modal>
 </main>

@@ -2,6 +2,9 @@ defmodule RlinkxWeb.RlinkxLive.Index do
   use RlinkxWeb, :live_view
 
   alias Rlinkx.Remote
+  # alias Rlinkx.Remote.Bookmark
+  
+  # import RlinkxWeb.BookmarkComponents
 
   def mount(_params, _session, socket) do
     links = Remote.get_links_and_following(socket.assigns.current_user)
