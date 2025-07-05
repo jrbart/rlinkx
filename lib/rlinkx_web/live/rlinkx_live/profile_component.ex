@@ -7,12 +7,12 @@ defmodule RlinkxWeb.RlinkxLive.ProfileComponent do
       <div>
         <h2>Profile</h2>
       </div>
-      <button phx-click="close-profile" >
+      <button phx-click="close-profile">
         <.icon name="hero-x-mark" class="w-5 h-5" />
       </button>
       <div>
         <h2>{@user.username}</h2>
-      </div>  
+      </div>
     </div>
     """
   end

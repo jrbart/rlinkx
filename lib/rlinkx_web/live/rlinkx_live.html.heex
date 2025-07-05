@@ -82,10 +82,7 @@
   <%!-- User info (from Auth) --%>
   <div class="column right">
     <div>
-      <.link 
-        phx-click="show-profile"
-        phx-value-user-id={@current_user.id}
-      >
+      <.link phx-click="show-profile" phx-value-user-id={@current_user.id}>
         {user_name(@current_user)}
       </.link>
     </div>
@@ -168,10 +165,7 @@
 </div>
 
 <%= if assigns[:profile] do %>
-  <.live_component 
-    id="profile" 
-    module={RlinkxWeb.RlinkxLive.ProfileComponent} 
-    user={@profile} />
+  <.live_component id="profile" module={RlinkxWeb.RlinkxLive.ProfileComponent} user={@profile} />
 <% end %>
 
 <.modal show={@live_action == :new} id="new-bookmark-modal">
