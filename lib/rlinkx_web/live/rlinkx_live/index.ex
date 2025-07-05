@@ -3,7 +3,7 @@ defmodule RlinkxWeb.RlinkxLive.Index do
 
   alias Rlinkx.Remote
   # alias Rlinkx.Remote.Bookmark
-  
+
   # import RlinkxWeb.BookmarkComponents
 
   def mount(_params, _session, socket) do

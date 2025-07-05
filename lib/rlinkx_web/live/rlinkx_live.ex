@@ -100,7 +100,7 @@ defmodule RlinkxWeb.RlinkxLive do
       insight.inserted_at
       |> DateTime.shift_zone!(timezone)
       |> DateTime.to_date()
-    end )
+    end)
     |> Enum.sort_by(fn {date, _insgts} -> date end, &(Date.compare(&1, &2) != :gt))
     |> Enum.flat_map(fn {date, insights} -> [date | insights] end)
   end
@@ -109,7 +109,7 @@ defmodule RlinkxWeb.RlinkxLive do
 
   def maybe_insert_unread_marker(insights, last_read_at) do
     {read, unread} =
-      Enum.split_while(insights, fn 
+      Enum.split_while(insights, fn
         %Insight{} = insight -> DateTime.compare(insight.inserted_at, last_read_at) != :gt
         _ -> true
       end)

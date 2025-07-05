@@ -1,8 +1,6 @@
 <main>
   {@page_title}
-  <button
-    phx-click={show_modal("new-bookmark-modal")}
-  >
+  <button phx-click={show_modal("new-bookmark-modal")}>
     Create Bookmark
   </button>
   <br />
@@ -29,7 +27,7 @@
 
   <.modal id="new-bookmark-modal">
     <.header>New bookmark</.header>
-    <.live_component 
+    <.live_component
       module={RlinkxWeb.RlinkxLive.FormComponent}
       id="new-bookmark-form-component"
       current_user={@current_user}

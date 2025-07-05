@@ -9,7 +9,7 @@ defmodule RlinkxWeb.RlinkxLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div id="new-bookmark-form">
-      <.bookmark_form form={@form} target={@myself}/>
+      <.bookmark_form form={@form} target={@myself} />
     </div>
     """
   end
@@ -17,9 +17,9 @@ defmodule RlinkxWeb.RlinkxLive.FormComponent do
   def mount(socket) do
     changeset = Remote.change_link(%Bookmark{})
 
-    { :ok, socket
-      |> assign_form(changeset)
-    }
+    {:ok,
+     socket
+     |> assign_form(changeset)}
   end
 
   # there is a default that copies assigns from the parent LiveView into the component
@@ -56,5 +56,4 @@ defmodule RlinkxWeb.RlinkxLive.FormComponent do
         {:noreply, assign_form(socket, changeset)}
     end
   end
-
 end
