@@ -172,6 +172,15 @@ defmodule RlinkxWeb.RlinkxLive do
     {:noreply, socket}
   end
 
+  def handle_event("show-profile", %{"user-id"=>user_id}, socket) do
+    user = Accounts.get_user!(user_id)
+    {:noreply, assign(socket, :profile, user)}  
+  end
+
+  def handle_event("close-profile", _, socket) do
+    {:noreply, assign(socket, :profile, nil)}  
+  end
+
   def handle_info({:insight_created, insight}, socket) do
     link = socket.assigns.link
 
@@ -240,7 +249,12 @@ defmodule RlinkxWeb.RlinkxLive do
     <div id={@dom_id} class="group">
       <div></div>
       <div>
-        <.link><span>{user_name(@insight.user)}</span></.link>
+        <.link
+          phx-click="show-profile"
+          phx-value-user-id={@insight.user.id}
+        >
+          {user_name(@insight.user)}
+        </.link>
         <span :if={@timezone}>{insight_timestamp(@insight, @timezone)}</span>
         <p>{@insight.body}</p>
         <button

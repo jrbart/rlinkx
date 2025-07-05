@@ -81,7 +81,14 @@
 
   <%!-- User info (from Auth) --%>
   <div class="column right">
-    <div>{user_name(@current_user)}</div>
+    <div>
+      <.link 
+        phx-click="show-profile"
+        phx-value-user-id={@current_user.id}
+      >
+        {user_name(@current_user)}
+      </.link>
+    </div>
     <div><.link href={~p"/users/settings"}> Settings </.link></div>
     <div><.link href={~p"/users/log_out"} method="delete"> Log out </.link></div>
   </div>
@@ -159,6 +166,13 @@
     </div>
   </div>
 </div>
+
+<%= if assigns[:profile] do %>
+  <.live_component 
+    id="profile" 
+    module={RlinkxWeb.RlinkxLive.ProfileComponent} 
+    user={@profile} />
+<% end %>
 
 <.modal show={@live_action == :new} id="new-bookmark-modal">
   <.header>New bookmark</.header>
