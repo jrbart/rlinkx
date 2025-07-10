@@ -29,7 +29,6 @@ defmodule RlinkxWeb.RlinkxLive do
     {:ok,
      socket
      |> assign(
-       hide_link?: false,
        links: links,
        users: users,
        online_users: online_users,
@@ -119,10 +118,6 @@ defmodule RlinkxWeb.RlinkxLive do
     else
       read ++ [:unread_marker | unread]
     end
-  end
-
-  def handle_event("toggle-link", _params, socket) do
-    {:noreply, update(socket, :hide_link?, &(!&1))}
   end
 
   def handle_event("follow-bookmark", _params, socket) do
