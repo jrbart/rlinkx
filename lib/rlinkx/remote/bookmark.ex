@@ -11,6 +11,8 @@ defmodule Rlinkx.Remote.Bookmark do
     field :description, :string
     field :url_link, :string
 
+    belongs_to :owner, User
+
     many_to_many :users, User, join_through: UsersBookmarks
 
     # explicitly expose followers from join table
