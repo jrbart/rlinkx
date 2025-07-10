@@ -50,6 +50,23 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
     end
   end
 
+  def handle_event("delete-bookmark", %{"bookmark" => bookmark}, socket) do
+    link = Remote.get_link!(bookmark)
+
+    if Remote.list_all_insights(link) == [] do
+      Remote.delete_link(link.id, socket.assigns.current_user)
+
+      {:noreply,
+       socket
+       |> put_flash(:info, "Link DELETED!")
+       |> push_navigate(to: ~p"/links")}
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, "Cannot delete Bookmark that has Insights")}
+    end
+  end
+
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, form: to_form(changeset))
   end

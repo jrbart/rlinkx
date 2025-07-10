@@ -21,6 +21,14 @@ defmodule RlinkxWeb.BookmarkComponents do
       <.input field={@form[:url_link]} type="text" label="Link" phx-debounce />
       <:actions>
         <.button phx-disable-with="Saving...">Save</.button>
+        <.button
+          phx-click="delete-bookmark"
+          phx-value-bookmark={@form.data.id}
+          type="button"
+          data-confirm="This will be permanent"
+        >
+          Delete
+        </.button>
       </:actions>
     </.simple_form>
     """

@@ -50,6 +50,15 @@ defmodule Rlinkx.Remote do
     Repo.all(from Bookmark, order_by: :name)
   end
 
+  def delete_link(id, %User{id: user_id}) do
+    link = Repo.get!(Bookmark, id, preload: :user)
+
+    if link.owner_id == user_id do
+      Repo.delete!(link)
+      Phoenix.PubSub.broadcast!(@pubsub, topic(link.id), {:bookmark_deleted, link})
+    end
+  end
+
   def following?(%Bookmark{} = bookmark, %User{} = user) do
     Repo.exists?(
       from ub in UsersBookmarks, where: ub.bookmark_id == ^bookmark.id and ub.user_id == ^user.id
