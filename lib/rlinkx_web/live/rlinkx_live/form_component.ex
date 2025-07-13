@@ -9,6 +9,7 @@ defmodule RlinkxWeb.RlinkxLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div id="new-bookmark-form">
+      <.bookmark_form form={@form} target={@myself} deletable?={false} />
     </div>
     """
   end

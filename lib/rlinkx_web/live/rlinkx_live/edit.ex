@@ -37,6 +37,7 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
     {:noreply, assign_form(socket, changeset)}
   end
 
+  # should be "update-bookmark" ?
   def handle_event("save-bookmark", %{"bookmark" => new_params}, socket) do
     case Remote.update_link(socket.assigns.link, new_params) do
       {:ok, link} ->
