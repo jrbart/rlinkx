@@ -9,25 +9,21 @@ defmodule RlinkxWeb.RlinkxLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div id="new-bookmark-form">
-      <.bookmark_form form={@form} target={@myself} />
     </div>
     """
   end
 
-  def mount(socket) do
-    changeset = Remote.change_link(%Bookmark{})
+  # def mount(socket) doi: {:ok, socket}
+
+  def update(assigns, socket) do
+    changeset =
+      Remote.change_link(%Bookmark{owner_id: assigns.current_user.id})
 
     {:ok,
      socket
+     |> assign(assigns)
      |> assign_form(changeset)}
   end
-
-  # there is a default that copies assigns from the parent LiveView into the component
-  # def update(assigns, socket) do
-  #   {:ok, 
-  #     assign(socket, assigns)
-  #   }
-  # end
 
   def assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
@@ -43,7 +39,7 @@ defmodule RlinkxWeb.RlinkxLive.FormComponent do
   end
 
   def handle_event("save-bookmark", %{"bookmark" => new_params}, socket) do
-    case Remote.create_link(new_params) do
+    case Remote.create_link(Map.put(new_params, "owner_id", socket.assigns.current_user.id)) do
       {:ok, link} ->
         Remote.follow_bookmark(link, socket.assigns.current_user)
 

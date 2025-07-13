@@ -5,6 +5,7 @@ defmodule RlinkxWeb.BookmarkComponents do
 
   attr :form, Phoenix.HTML.Form, required: true
   attr :target, :any, default: nil
+  attr :deletable?, :boolean, default: false
 
   # TODO: impoert with embed_templates (https://hexdocs.pm/phoenix_live_view/1.0.10/Phoenix.Component.html#embed_templates/2)
   def bookmark_form(assigns) do
@@ -22,6 +23,7 @@ defmodule RlinkxWeb.BookmarkComponents do
       <:actions>
         <.button phx-disable-with="Saving...">Save</.button>
         <.button
+          :if={@deletable?}
           phx-click="delete-bookmark"
           phx-value-bookmark={@form.data.id}
           type="button"

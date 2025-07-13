@@ -26,8 +26,8 @@ defmodule Rlinkx.Remote.Bookmark do
   @doc false
   def changeset(bookmark, attrs) do
     bookmark
-    |> cast(attrs, [:name, :description, :url_link])
-    |> validate_required([:name, :url_link])
+    |> cast(attrs, [:name, :description, :url_link, :owner_id])
+    |> validate_required([:name, :url_link, :owner_id])
     |> validate_length(:name, max: 20)
     |> validate_format(:name, ~r/\A[[:alnum:]_-]+\z/,
       message: "can only contain alphanumeric characters, dashes and underscores"
