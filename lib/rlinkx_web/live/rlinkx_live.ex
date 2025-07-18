@@ -49,6 +49,7 @@ defmodule RlinkxWeb.RlinkxLive do
     link =
       params
       |> Map.fetch!("id")
+      |> Remote.get_link() # Right here, error occurs if id doesn't exist
 
     last_read_at = Remote.get_last_read_at(link, socket.assigns.current_user)
 
