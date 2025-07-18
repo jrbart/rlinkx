@@ -49,7 +49,6 @@ defmodule RlinkxWeb.RlinkxLive do
     link =
       params
       |> Map.fetch!("id")
-      |> Remote.get_link!()
 
     last_read_at = Remote.get_last_read_at(link, socket.assigns.current_user)
 

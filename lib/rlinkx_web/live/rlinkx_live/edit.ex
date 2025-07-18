@@ -7,7 +7,7 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
   import RlinkxWeb.BookmarkComponents
 
   def mount(%{"id" => id} = _params, _session, socket) do
-    link = Remote.get_link!(id)
+    link = Remote.get_link(id)
 
     socket =
       if Remote.following?(link, socket.assigns.current_user) do
@@ -52,7 +52,8 @@ defmodule RlinkxWeb.RlinkxLive.Edit do
   end
 
   def handle_event("delete-bookmark", %{"bookmark" => bookmark}, socket) do
-    link = Remote.get_link!(bookmark)
+    # why are we fetching link here?  It should be in the socket...
+    link = Remote.get_link(bookmark)
 
     if Remote.list_all_insights(link) == [] do
       Remote.delete_link(link.id, socket.assigns.current_user)

@@ -9,8 +9,8 @@ defmodule Rlinkx.Remote do
 
   @pubsub Rlinkx.PubSub
 
-  def get_link!(id) do
-    Repo.get!(Bookmark, id)
+  def get_link(id) do
+    Repo.get(Bookmark, id)
   end
 
   def get_followed_links(%User{} = user) do
@@ -46,24 +46,9 @@ defmodule Rlinkx.Remote do
     Repo.all(query)
   end
 
-  def get_all do
-    Repo.all(from Bookmark, order_by: :name)
-  end
-
-  def delete_link(id, %User{id: user_id}) do
-    link = Repo.get!(Bookmark, id, preload: :user)
-
-    if link.owner_id == user_id do
-      Repo.delete!(link)
-      Phoenix.PubSub.broadcast!(@pubsub, topic(link.id), {:bookmark_deleted, link})
-    end
-  end
-
-  def following?(%Bookmark{} = bookmark, %User{} = user) do
-    Repo.exists?(
-      from ub in UsersBookmarks, where: ub.bookmark_id == ^bookmark.id and ub.user_id == ^user.id
-    )
-  end
+  # def get_all do
+  #   Repo.all(from Bookmark, order_by: :name)
+  # end
 
   def list_all_insights(%Bookmark{id: bookmark_id}) do
     Insight
@@ -98,6 +83,12 @@ defmodule Rlinkx.Remote do
 
   def follow_bookmark(bookmark, user) do
     Repo.insert!(%UsersBookmarks{bookmark: bookmark, user: user})
+  end
+
+  def following?(%Bookmark{} = bookmark, %User{} = user) do
+    Repo.exists?(
+      from ub in UsersBookmarks, where: ub.bookmark_id == ^bookmark.id and ub.user_id == ^user.id
+    )
   end
 
   def toggle_following_bookmark(bookmark, user) do
@@ -136,6 +127,15 @@ defmodule Rlinkx.Remote do
     bookmark
     |> Bookmark.changeset(attrs)
     |> Repo.update()
+  end
+
+  def delete_link(id, %User{id: user_id}) do
+    link = Repo.get!(Bookmark, id, preload: :user)
+
+    if link.owner_id == user_id do
+      Repo.delete!(link)
+      Phoenix.PubSub.broadcast!(@pubsub, topic(link.id), {:bookmark_deleted, link})
+    end
   end
 
   def change_link(link, attrs \\ %{}) do
