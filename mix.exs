@@ -61,7 +61,7 @@ defmodule Rlinkx.MixProject do
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:timex, "~> 3.7"},
-      {:live_debugger, "~> 0.1.7", only: :dev}
+      {:live_debugger, "~> 0.3.1", only: :dev}
     ]
   end
 
