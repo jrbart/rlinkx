@@ -15,7 +15,7 @@ defmodule RlinkxWeb.RlinkxLive do
     Online.subscribe()
     online_users = Online.list()
 
-    # We subscribe to all links so we can update the unread count whenever
+    # We subscribe to all followed links so we can update the unread count whenever
     # a new insight is posted
     Enum.each(links, fn {link, _count} -> Remote.subscribe_to_link(link) end)
 
@@ -49,41 +49,48 @@ defmodule RlinkxWeb.RlinkxLive do
     link =
       params
       |> Map.fetch!("id")
-      |> Remote.get_link() # Right here, error occurs if id doesn't exist
+      |> Remote.get_link()
 
-    last_read_at = Remote.get_last_read_at(link, socket.assigns.current_user)
+    socket =
+      if link do
+        last_read_at = Remote.get_last_read_at(link, socket.assigns.current_user)
 
-    insights =
-      link
-      |> Remote.list_all_insights()
-      |> insert_date_dividers(socket.assigns.timezone)
-      |> maybe_insert_unread_marker(last_read_at)
+        insights =
+          link
+          |> Remote.list_all_insights()
+          |> insert_date_dividers(socket.assigns.timezone)
+          |> maybe_insert_unread_marker(last_read_at)
 
-    following? = Remote.following?(link, socket.assigns.current_user)
+        following? = Remote.following?(link, socket.assigns.current_user)
 
-    if following? do
-      Remote.update_last_read(link, socket.assigns.current_user)
-    end
+        if following? do
+          Remote.update_last_read(link, socket.assigns.current_user)
+        end
 
-    {:noreply,
-     socket
-     |> assign(
-       link: link,
-       following?: following?,
-       # link has to exist or else get_link would have raised
-       page_title: link.name
-     )
-     |> stream(:insights, insights, reset: true)
-     |> assign_insight_form(Remote.changeset_insight(%Insight{}))
-     # Reset unread count for current bookmark
-     |> update(:links, fn links ->
-       link_id = link.id
+        socket
+        |> assign(
+          link: link,
+          following?: following?,
+          # link has to exist or else get_link would have raised
+          page_title: link.name
+        )
+        |> stream(:insights, insights, reset: true)
+        |> assign_insight_form(Remote.changeset_insight(%Insight{}))
+        # Reset unread count for current bookmark
+        |> update(:links, fn links ->
+          link_id = link.id
 
-       Enum.map(links, fn
-         {%Bookmark{id: ^link_id} = link, _} -> {link, 0}
-         other -> other
-       end)
-     end)}
+          Enum.map(links, fn
+            {%Bookmark{id: ^link_id} = link, _} -> {link, 0}
+            other -> other
+          end)
+        end)
+      else
+        # if page doesn't exist (or was deleted)
+        push_navigate(socket, to: ~p"/links")
+      end
+
+    {:noreply, socket}
   end
 
   def assign_insight_form(socket, changeset) do
@@ -174,6 +181,13 @@ defmodule RlinkxWeb.RlinkxLive do
 
   def handle_event("close-profile", _, socket) do
     {:noreply, assign(socket, :profile, nil)}
+  end
+
+  def handle_info({:bookmark_deleted, link}, socket) do
+    # remove bookmark from sidebar
+    # remove bookmark if being viewed (only bookmarks with no insights are deleted)
+    # For now, do nothing...
+    {:noreply, socket}
   end
 
   def handle_info({:insight_created, insight}, socket) do
