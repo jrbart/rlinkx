@@ -87,7 +87,10 @@ defmodule RlinkxWeb.RlinkxLive do
         end)
       else
         # if page doesn't exist (or was deleted)
-        push_navigate(socket, to: ~p"/links")
+        socket =
+        socket
+        |> put_flash(:error, "The page you were viewing either doesn't exist or was deleted.")
+        |> push_navigate(to: ~p"/links")
       end
 
     {:noreply, socket}
